@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- 静かな先行公開用。本公開時にこの行を削除する -->
+  <meta name="robots" content="noindex" />
+  <title>とおまもり｜離れて暮らす親の備えと緊急ナビ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500&family=Noto+Serif+JP:wght@500&family=Yusei+Magic&display=swap" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <h1 class="site-title"><button type="button" id="site-title" class="site-title-btn">とおまもり</button></h1>
+    </div>
+  </header>
+
+  <!-- 3ステップの帯(全画面共通・診断後に表示) -->
+  <nav id="step-band" class="step-band hidden" aria-label="進行状況"></nav>
+
+  <!-- 「← 戻る」(全画面共通・トップ以外で表示。直前の画面へ / 仕様4.3 §4-2) -->
+  <div id="back-bar" class="back-bar hidden">
+    <div class="wrap">
+      <button type="button" id="btn-global-back" class="btn-global-back">← 戻る</button>
+    </div>
+  </div>
+
+  <main class="wrap" id="main">
+
+    <!-- ============ ホーム(次の一手・2回目以降の入口) ============ -->
+    <section id="screen-home" class="screen hidden">
+      <div id="home-area"></div>
+    </section>
+
+    <!-- ============ トップ画面(ランディング) ============ -->
+    <section id="screen-top" class="screen">
+      <div class="hero">
+        <!-- 上から: 定義の一行 → 題字 → タグライン → 既存のヒーローコピー(仕様4.3 §1) -->
+        <p class="hero-define">離れて暮らす高齢の親御さんを支える、ご家族のためのサポートサイトです。</p>
+        <!-- 題字(多色はここだけ。一文字=1span、色は style.css の --logo-c1..c5) -->
+        <p class="hero-logo" role="img" aria-label="とおまもり"><span class="logo-c1" aria-hidden="true">と</span><span class="logo-c2" aria-hidden="true">お</span><span class="logo-c3" aria-hidden="true">ま</span><span class="logo-c4" aria-hidden="true">も</span><span class="logo-c5" aria-hidden="true">り</span></p>
+        <p class="hero-tagline">離れていても、できることがあります。</p>
+        <div class="hero-illus" aria-hidden="true"><svg viewBox="0 0 400 180" role="img" aria-label="離れた二つの家を点線の道が結び、左の家から電話の音が広がる" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M60 104 L90 80 L120 104 M68 100 L68 140 L112 140 L112 100"/><path d="M280 104 L310 80 L340 104 M288 100 L288 140 L332 140 L332 100"/><path d="M120 142 Q200 168 288 142" stroke-dasharray="1 9"/><path d="M110 70 Q120 80 110 90 M118 62 Q134 80 118 98" stroke="var(--color-kaki)"/><path d="M356 40 C368 42 372 56 362 64 C352 58 350 44 356 40 Z M359 46 L363 60" stroke="var(--color-kaki)"/></g></svg></div>
+        <h2 class="hero-title">離れて暮らす親に、何かあったら。</h2>
+        <p class="hero-sub">その不安、正体は「何があるか知らないこと」かもしれません。</p>
+      </div>
+
+      <div class="lp-block">
+        <p>こんなことが、ふと頭をよぎることはありませんか。</p>
+        <p class="lp-quote">「実家の親が倒れたと電話が来たら、自分はすぐに動けない。誰に何を頼めばいいのかも、正直わからない」</p>
+        <p class="lp-quote" id="lp-caregiver-down">「いまは自分が親と二人暮らし。でも、<button type="button" id="link-self-down-quote" class="link-inline"><strong>もし自分のほうが急に入院したら</strong></button>、残された親はその夜からどうなるんだろう」</p>
+        <p class="lp-quote">「このまま何かあったら、結局、仕事を辞めて戻るしかないのかな」</p>
+        <p class="lp-quote">「電話に出ない。何かあったのか、気づいていないだけなのか──確かめるために、また仕事を抜けて向かっている」</p>
+        <p>考え始めると不安ばかりが膨らんで、結局「その時はその時」と、ふたをしてしまう。多くの方がそうです。無理もありません。介護の制度は複雑で、<strong>何が使えるのかを知る機会が、そもそもないまま</strong>その日が来てしまうからです。</p>
+      </div>
+
+      <div class="lp-block">
+        <h3 class="lp-h3">なぜ、見つけられないのか</h3>
+        <p>公的な制度はたくさんあります。でも、役所や窓口が「あなたの家なら、これとこれが使えますよ」とまとめて教えてくれることは、基本的にありません。窓口は<strong>聞かれたことに答える</strong>仕組みであり、存在を知らない制度について、人は質問のしようがないからです。</p>
+        <p>だから制度は、「たまたま知っていた人」だけが使い、知らなかった人の前を素通りしていきます。</p>
+        <p>このサイトは、そこを補います。あなたの状況をうかがったうえで、<strong>あなたが質問できるはずのなかった制度まで含めて</strong>、先回りしてお知らせします。</p>
+        <p><button type="button" id="link-about" class="link-btn link-about"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7"/></svg> このサイトを作った理由(開発者より)</button></p>
+      </div>
+
+      <div class="lp-block">
+        <h3 class="lp-h3">このサイトができること</h3>
+        <p>でも実は、いざという時にできることは、<strong>その日までに何を用意したかで、ほぼ決まっています</strong>。介護タクシーは当日呼んでも来ません。緊急通報のボタンは、申し込んでいなければ存在しません。逆に言えば──先に知って、少し備えておくだけで、「その日」の景色はまったく違うものになります。</p>
+        <p>このサイトは、あなたの家の状況を5分の質問でうかがい、</p>
+        <ul class="lp-list">
+          <li><strong>いま既に使える手札</strong>(意外とあります)</li>
+          <li><strong>少し準備すれば使える手札</strong>(費用の目安つき)</li>
+          <li><strong>いざという時、その手札をどの順番で使うか</strong></li>
+        </ul>
+        <p>を、あなたの家専用の一覧にしてお渡しします。全部無料です。入力内容はあなたの端末の中だけに保存され、外部には送信されません。</p>
+        <p class="pricing-note">先行公開期間中は、すべての機能を無料でお使いいただけます。家族との共有・複数端末での利用などの「家族プラン」は、正式版で月500円(予定)です。</p>
+        <p>多くの備えサイトが見落としている、<button type="button" id="link-caregiver-down" class="link-inline"><strong>「支えている家族のほうが倒れたら」</strong></button>という場面も扱います。親御さんの急変だけでなく、あなた自身の入院で親が一人になる事態まで含めて、手札を整理します。</p>
+      </div>
+
+      <!-- 使い方の小節(承認済み文言・一字一句変更禁止)。
+           「○○さん」は文言の一部。固有名に置換しないこと(静的HTMLのまま出す)。 -->
+      <div class="lp-block howto">
+        <h3 class="lp-h3">とおまもりは、こう使います</h3>
+        <h4 class="howto-step">1. まず、親御さんの状況を登録します</h4>
+        <p>いくつかの質問に答えるだけです。年齢や暮らしぶり、いま心配なことを選ぶと、「いまどういう段階なのか」「何から手をつければよいか」が整理されて表示されます。</p>
+        <h4 class="howto-step">2. 足りない備えを、一つずつ整えます</h4>
+        <p>あなたの状況に合わせて、まだ準備できていないことだけがカードで出てきます。どこに電話すればよいか、費用の目安、電話で話す台本まで書いてあります。</p>
+        <p>台本の「コピー」を押すと文面を写し取れます。スマホのメモ帳や、LINEの自分あてに貼っておくと、電話しながら読み上げられて便利です。</p>
+        <h4 class="howto-step">3. 整えた体制を書き留めておくと、いざという時に効きます</h4>
+        <p>ケアマネさんやご近所の駆けつけ役など、頼れる人の名前を「体制メモ」に登録しておきます。すると緊急時には、画面の「いま困っている」ボタンを押すだけで、「まず○○さんに電話」のように、あなたの体制に合わせた手順が表示されます。</p>
+      </div>
+
+      <div class="lp-block">
+        <h3 class="lp-h3">このサイトが、あえてしないこと</h3>
+        <p>このサイトは医療の診断はしません。病名の判断も、「救急車は要らない」という判断もしません。そこは、お医者さんや専門の方にお任せします。命に関わる兆候があるときに迷わず119番につなぐこと、そして迷ったときに相談できる先(#7119など)を示すこと──それがこのサイトの役目です。</p>
+      </div>
+
+      <div class="privacy-box">
+        入力内容は<strong>この端末の中にのみ保存</strong>され、外部には送信されません。
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="area-pref">お住まいの地域(親御さんの地域)を選んでください</label>
+        <p class="area-reason" id="area-reason">お住まいの市の窓口・制度をご案内するためにうかがいます。</p>
+        <div id="area-choices" class="area-choices" role="group" aria-label="地域選択">
+          <select id="area-pref" class="area-select" aria-label="都道府県">
+            <option value="">都道府県を選ぶ</option>
+          </select>
+          <select id="area-muni" class="area-select" aria-label="市区町村" disabled>
+            <option value="">市区町村を選ぶ</option>
+          </select>
+        </div>
+        <div id="area-notice" class="area-notice hidden" aria-live="polite"></div>
+      </div>
+
+      <div id="resume-box" class="resume-box hidden">
+        <button type="button" id="btn-resume" class="btn btn-secondary">前回の手札一覧を見る</button>
+        <button type="button" id="btn-emergency-top" class="btn btn-secondary">いざという時のガイドを見る</button>
+      </div>
+
+      <div class="cta-group">
+        <button type="button" id="btn-start" class="btn btn-primary">5分で、わが家の手札を確認する</button>
+      </div>
+
+      <p class="top-mame-link"><button type="button" class="link-btn link-mame"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7"/></svg> 現場で知った小さなこと(番外編)</button></p>
+
+      <!-- 免責の一節(承認済み文言・一字一句変更禁止)。トップ最下部。控えめな補助テキスト。 -->
+      <section class="site-disclaimer" aria-label="このサイトの情報について">
+        <h3 class="disclaimer-h">このサイトの情報について</h3>
+        <p>このサイトは、制度やサービスの「入口」をご案内するものです。内容にはできるかぎり確認日と出典を添えていますが、制度の内容や窓口は変わることがあります。実際に申請やご利用をされるときは、必ずそれぞれの窓口や公式ページで、最新の情報をお確かめください。</p>
+        <p>掲載内容には正確を期していますが、万一誤りがあった場合、それによって生じた損害の責任は負いかねます。お気づきの点があれば、お知らせいただけると助かります。</p>
+      </section>
+    </section>
+
+    <!-- ============ 診断画面 ============ -->
+    <section id="screen-diagnosis" class="screen hidden">
+      <div class="progress">
+        <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+        <div class="progress-text">
+          <span id="progress-block" class="progress-block"></span>
+          <span id="progress-count" class="progress-count"></span>
+        </div>
+      </div>
+
+      <div id="question-area" class="question-area" aria-live="polite"></div>
+
+      <div class="q-nav">
+        <button type="button" id="btn-back" class="btn btn-ghost">← 戻る</button>
+      </div>
+    </section>
+
+    <!-- ============ 状況の鏡+テーマ宣言 ============ -->
+    <section id="screen-mirror" class="screen hidden">
+      <div id="mirror-area" class="mirror-area"></div>
+      <div class="mirror-nav">
+        <button type="button" id="btn-mirror-next" class="btn btn-primary">あなたの備えプランを見る →</button>
+        <button type="button" id="btn-mirror-back" class="btn btn-ghost">← 質問に戻る</button>
+      </div>
+    </section>
+
+    <!-- ============ 平時ビュー(処方=備えプラン) ============ -->
+    <section id="screen-result" class="screen hidden">
+      <div id="result-area"></div>
+
+      <div class="result-footer">
+        <div class="save-box">
+          <p><strong>この端末に保存されました。</strong>状況が変わったら、いつでも診断し直してください。</p>
+          <div class="save-actions">
+            <button type="button" id="btn-open-memo" class="btn btn-secondary">体制メモを開く(連絡先を登録)</button>
+            <button type="button" id="btn-restart" class="btn btn-ghost">もう一度診断する</button>
+            <button type="button" id="btn-delete" class="btn btn-ghost btn-danger">保存したデータを削除</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 緊急時ビュー(場面別ガイド) ============ -->
+    <section id="screen-emergency" class="screen hidden">
+      <div id="danger-banner" class="danger-banner" role="alert"></div>
+      <div class="emg-head">
+        <h2 class="result-h2">場面別ガイド</h2>
+        <p class="result-intro">いま起きている場面を選んでください。あなたの手札だけで手順を組み立てます。</p>
+      </div>
+      <div id="scene-choices" class="scene-choices"></div>
+      <div id="scene-detail" class="scene-detail"></div>
+      <div class="emg-nav">
+        <button type="button" id="btn-emergency-back" class="btn btn-ghost">← 備えプランに戻る</button>
+      </div>
+    </section>
+
+    <!-- ============ 体制メモ(固有名の登録) ============ -->
+    <section id="screen-memo" class="screen hidden">
+      <h2 class="result-h2">体制メモ</h2>
+      <p class="result-intro">
+        ケアマネさんや駆けつけ役など、あなたの家の「固有名」を登録しておくと、緊急時ガイドが
+        「ケアマネの○○さんに電話」と実名で指示します。
+      </p>
+      <div class="privacy-box">
+        入力内容は<strong>この端末の中にのみ保存</strong>され、外部には送信されません。空欄のままでも構いません。
+      </div>
+      <form id="memo-form" class="memo-form" autocomplete="off"></form>
+      <div class="memo-nav">
+        <button type="button" id="btn-memo-save" class="btn btn-primary">保存する</button>
+        <span id="memo-status" class="copy-status" role="status"></span>
+        <button type="button" id="btn-memo-clear" class="btn btn-ghost btn-danger">体制メモを消去</button>
+        <button type="button" id="btn-memo-back" class="btn btn-ghost">← 備えプランに戻る</button>
+      </div>
+    </section>
+
+    <!-- ============ 開発者より ============ -->
+    <section id="screen-about" class="screen hidden">
+      <article class="about">
+        <h2 class="result-h2">開発者より──このサイトを作った理由</h2>
+        <p>私自身、離れて暮らす高齢の母を支える、一人の家族です。</p>
+        <p>母と連絡が取れなくなるたびに、仕事を抜けて様子を見に行く。そんなことが続き、これ以上は職場に迷惑をかけられないと、私は仕事を辞めました。</p>
+        <p>辞めてからは、時間ができたぶん介護のことを調べました。ケアマネジャーがつき、ヘルパーさんの力も借り、自分では「ひと通り分かってきた」つもりでいました。</p>
+        <p>それでも、このサイトを作るための調査で、<strong>初めて知った制度がいくつもありました。</strong> 母が使えたはずの補助。申請すれば戻ったはずのお金。誰かが隠していたわけではありません。知らないものは質問できない──ただそれだけの理由で、ずっと目の前を素通りしていたのです。</p>
+        <p>そして思うのです。働きながら、限られた時間で調べていた頃の私は、今よりずっと少ない情報で、ずっと大きな判断──仕事を辞めるかどうか──をしていた。あのとき今の知識があれば、違う選び方もあったかもしれません。</p>
+        <p>同じ場所に立っている方に、あの頃の私が欲しかったものを渡したい。それが、このサイトです。</p>
+        <p>じゅうぶんにしてあげられていない、と感じている方へ。遠くからでも、できることは、ちゃんとあります。</p>
+        <p class="about-signature" id="about-signature"></p>
+      </article>
+      <div class="about-nav">
+        <button type="button" id="btn-about-back" class="btn btn-ghost">← トップに戻る</button>
+      </div>
+    </section>
+
+    <!-- ============ 番外編: 現場で知った小さなこと ============ -->
+    <section id="screen-mame" class="screen hidden">
+      <div id="mame-area"></div>
+      <div class="mame-nav">
+        <button type="button" id="btn-mame-back" class="btn btn-ghost">← 戻る</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 用語辞典モーダル(施設のことば早見表) -->
+  <div id="glossary-modal" class="glossary-modal hidden" role="dialog" aria-modal="true" aria-labelledby="glossary-title">
+    <div class="glossary-backdrop" id="glossary-backdrop"></div>
+    <div class="glossary-panel">
+      <button type="button" id="glossary-close" class="glossary-close" aria-label="閉じる">×</button>
+      <h3 id="glossary-title" class="glossary-title"></h3>
+      <div id="glossary-body" class="glossary-body"></div>
+    </div>
+  </div>
+
+  <!-- ホーム(トップ以外の全画面・右下。緊急ボタンの真上に積む) -->
+  <button type="button" id="home-btn" class="home-btn hidden">ホーム</button>
+
+  <!-- 「いま困っている」固定ボタン(全画面・未診断でも動作) -->
+  <button type="button" id="panic-btn" class="panic-btn"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg> いま困っている</button>
+
+  <!-- 画面内トースト(因果通知) -->
+  <div id="toast-root" class="toast-root" role="status" aria-live="polite"></div>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p class="disclaimer">
+        本サービスは医療診断を行うものではありません。命に関わる症状がある場合、または判断に迷う場合は、
+        <a href="tel:119">119番</a>、<a href="tel:#7119">#7119</a>、かかりつけ医、医療機関に相談してください。
+      </p>
+    </div>
+  </footer>
+
+  <script src="rules-engine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

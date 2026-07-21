@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "note": "スキーマ定義は docs/areas_schema_v1.md。解決順: municipality → prefecture → national。全表示ブロックに last_checked を添えること。",
+  "areas": [
+    {
+      "area_id": "national",
+      "area_type": "national",
+      "parent": null,
+      "display_name": "全国共通",
+      "emergency_consult": {
+        "sharp7119": {
+          "available": "unknown",
+          "note": "#7119はお住まいの地域によって使えない場合があります。使えない場合は、Q助やかかりつけ医をご利用ください。",
+          "phone": null,
+          "hours": null,
+          "source_url": "https://www.fdma.go.jp/mission/enrichment/appropriate/appropriate003.html",
+          "last_checked": "2026-07-13"
+        },
+        "q_jyosuke": {
+          "name": "全国版救急受診アプリ Q助",
+          "type": "web_app",
+          "url": "https://www.fdma.go.jp/mission/enrichment/appropriate/appropriate003.html",
+          "last_checked": "2026-07-13"
+        }
+      },
+      "elderly_consult": {
+        "chiiki_houkatsu": {
+          "name": "お住まいの市区町村の地域包括支援センター",
+          "how_to_find": "「(市区町村名) 地域包括支援センター」で検索するか、市区町村の高齢者福祉窓口に電話してください。",
+          "list_url": null,
+          "last_checked": "2026-07-13"
+        }
+      },
+      "emergency_call_system": {
+        "name": "お住まいの自治体の緊急通報システム",
+        "how_to_find": "多くの自治体が高齢者向け緊急通報システムを実施しています。「(市区町村名) 緊急通報システム」で検索してください。",
+        "last_checked": "2026-07-13"
+      },
+      "medical_info_kit": {
+        "text": "かかりつけ医・持病・薬・緊急連絡先を書いたシートを容器に入れて冷蔵庫に保管してください(自治体によっては「救急医療情報キット」として配布しています)。",
+        "last_checked": "2026-07-13"
+      },
+      "taxi_directory": {
+        "text": "介護タクシーは、ケアマネジャーまたは地域包括支援センターに紹介を依頼するのが確実です。",
+        "last_checked": "2026-07-13"
+      }
+    },
+    {
+      "area_id": "saitama",
+      "area_type": "prefecture",
+      "parent": "national",
+      "display_name": "埼玉県",
+      "emergency_consult": {
+        "sharp7119": {
+          "available": "yes",
+          "name": "埼玉県救急電話相談",
+          "phone": "#7119",
+          "alt_phone": "048-824-4199",
+          "alt_phone_note": "ダイヤル回線・IP電話・PHS・都県境の地域の場合",
+          "hours": "24時間365日",
+          "menu": "①子供の相談(中学生まで) ②大人の相談 ③医療機関案内",
+          "excluded": "歯科・口腔外科・精神科の案内は対象外",
+          "source_url": "https://www.pref.saitama.lg.jp/a0703/20151214.html",
+          "last_checked": "2026-07-13"
+        },
+        "ai_kyukyu": {
+          "name": "埼玉県AI救急相談",
+          "type": "web_chat",
+          "url": "https://www.pref.saitama.lg.jp/a0703/aikyukyu.html",
+          "note": "チャット形式。相談内容を#7119の相談員へ引き継ぐことも可能。",
+          "last_checked": "2026-07-13"
+        }
+      }
+    },
+    {
+      "area_id": "kawaguchi",
+      "area_type": "municipality",
+      "parent": "saitama",
+      "display_name": "川口市",
+      "elderly_consult": {
+        "chiiki_houkatsu": {
+          "name": "川口市地域包括支援センター(市内20か所)",
+          "hours": "平日8:30-17:00(時間外・休所日も電話相談対応あり)",
+          "coordinator": "長寿支援課 地域ケア係 048-271-9745",
+          "list_url": "https://www.city.kawaguchi.lg.jp/soshiki/01070/040/chiikihoukatsu/30775.html",
+          "note": "お住まいの町名ごとに担当センターが決まります。",
+          "last_checked": "2026-07-13"
+        }
+      },
+      "emergency_call_system": {
+        "name": "川口市 緊急通報システム",
+        "variants": [
+          {
+            "variant": "A_疾患要件あり",
+            "target": "おおむね65歳以上、急変のおそれのある疾患のある単身・高齢者世帯",
+            "cost": "機器貸与無料(アナログ電話回線が必要)",
+            "note": "医師の証明書が必要"
+          },
+          {
+            "variant": "B_疾患要件なし",
+            "target": "おおむね65歳以上の単身・高齢者世帯",
+            "cost": "有料(市の事業者一覧から選択して直接契約。固定型/携帯型あり)"
+          }
+        ],
+        "contact": "長寿支援課 支援係 048-259-7652(平日8:30-17:15)",
+        "source_url": "https://www.city.kawaguchi.lg.jp/soshiki/01070/040/4/3909.html",
+        "last_checked": "2026-07-13"
+      },
+      "medical_info_kit": {
+        "status": "unconfirmed",
+        "text": "かかりつけ医・持病・薬・緊急連絡先を書いたシートを容器に入れて冷蔵庫に保管してください(川口市での配布有無は確認中です)。",
+        "todo": "長寿支援課(048-259-7652)に配布有無を確認",
+        "last_checked": "2026-07-13"
+      },
+      "directory_links": [
+        {
+          "name": "かわぐち元気ナビ(川口市高齢者サービス情報検索サイト)",
+          "url": "https://chiiki-kaigo.casio.jp/kawaguchi",
+          "use_for": ["地域包括一覧", "見守り", "配食", "介護サービス事業者"],
+          "last_checked": "2026-07-13"
+        },
+        {
+          "name": "川口市 救急・病院(当番医・医療情報ネット)",
+          "url": "https://www.city.kawaguchi.lg.jp/soshiki/01090/010/4/1/index.html",
+          "use_for": ["当番医", "夜間休日診療"],
+          "last_checked": "2026-07-13"
+        }
+      ]
+    }
+  ]
+}

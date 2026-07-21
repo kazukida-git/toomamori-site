@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "note": "docs/preparedness_plan_spec_v1.md 2〜3章に準拠。unknownはすべてno相当(未対応)として評価する。",
+  "judgements": [
+    {
+      "id": "J1_first_response",
+      "label": "初動力: 30分以内に誰かが現地に行けるか",
+      "logic": "ok if (q_my_distance == 'within30' AND q_weekday_availability == 'yes') OR q_backup_person == 'within30' else ng"
+    },
+    {
+      "id": "J2_entry",
+      "label": "入室力: 家族到着前に誰かが家に入れるか",
+      "logic": "ok if q_key_access != 'none' else ng"
+    },
+    {
+      "id": "J3_self_report",
+      "label": "本人力: 本人がSOSを出し状況を伝えられるか",
+      "logic": "ok if q_self_report == 'yes' AND q_cognition == 'no' else ng"
+    },
+    {
+      "id": "J4_public_link",
+      "label": "公的接続: 認定・ケアマネさん等の公的ルートにつながっているか",
+      "logic": "ok if q_care_level in ['yoshien','yokaigo'] AND q_care_manager == 'yes' else ng"
+    },
+    {
+      "id": "J5_info_share",
+      "label": "情報共有: 誰が動いても同じ情報にアクセスできるか",
+      "logic": "ok if q_info_location == 'yes' AND q_contact_shared == 'yes' else ng"
+    }
+  ],
+  "flags": [
+    { "id": "F_alone_risk", "logic": "true if q_household in ['alone','elderly_couple','daytime_alone']" },
+    { "id": "F_fall", "logic": "true if q_fall_history == 'yes'" },
+    { "id": "F_caregiver_household", "logic": "true if q_household == 'always_someone'" },
+    { "id": "F_transport_gap", "logic": "true if q_my_distance in ['within120','over'] AND q_backup_person == 'none' AND q_care_taxi != 'yes'" },
+    { "id": "F_self_down_gap", "logic": "true if q_self_down_backup != 'yes' (unknownはno相当のためtrue)。trueのとき self_down_plan カードを平時ビュー最上部に表示し、scene_caregiver_down を必ず有効化する。" }
+  ],
+  "rules": [
+    { "rule_id": "r_no_first_response", "fire_if": "J1_first_response == 'ng'", "cost": "consult_this_week", "priority": 1 },
+    { "rule_id": "r_no_public_link", "fire_if": "J4_public_link == 'ng' AND (F_fall OR F_alone_risk)", "cost": "consult_this_week", "priority": 1 },
+    { "rule_id": "r_no_entry", "fire_if": "J2_entry == 'ng'", "cost": "do_today", "priority": 2 },
+    { "rule_id": "r_no_info_share", "fire_if": "J5_info_share == 'ng'", "cost": "do_today", "priority": 2 },
+    { "rule_id": "r_no_self_report", "fire_if": "J3_self_report == 'ng'", "cost": "consult_this_week", "priority": 3 },
+    { "rule_id": "r_caregiver_backup", "fire_if": "F_caregiver_household AND q_short_stay != 'yes'", "cost": "consult_this_week", "priority": 3 },
+    { "rule_id": "r_emergency_rule_unknown", "fire_if": "J4_public_link == 'ok' AND q_contact_shared != 'yes'", "cost": "do_today", "priority": 4 },
+    { "rule_id": "r_watch_gap", "fire_if": "F_alone_risk AND q_watch_service != 'yes' AND q_emergency_call_system != 'yes'", "cost": "consider_later", "priority": 4 },
+    { "rule_id": "r_transport_gap", "fire_if": "F_transport_gap", "cost": "consider_later", "priority": 5 }
+  ],
+  "output_policy": {
+    "scenario_max": 3,
+    "scenario_order": "priority asc, then rules order",
+    "cost_sections": [
+      { "id": "do_today", "label": "今日できること(費用ゼロ)" },
+      { "id": "consult_this_week", "label": "今週、電話で相談すること" },
+      { "id": "consider_later", "label": "じっくり検討すること(契約・費用あり)" }
+    ]
+  }
+}
