@@ -1,31 +1,24 @@
-/*
- * とおまもり — 選択肢カタログ型 画面制御(1ページSPA)
- * docs/options_catalog_spec_v2.md / docs/card_copy_v1.md / card_copy_v2_additions.md / landing_copy_v1.md に準拠。
- *
- * 責務:
- *  - data/*.json の読み込み(fetch)
- *  - 質問(18問+q_self_down_backup)を1問ずつ表示
- *  - RulesEngine でカード状態・フラグ・既定分岐を導出
- *  - 平時ビュー「あなたの手札一覧」/ 緊急時ビュー「場面別ガイド」を描画
- *  - 地域プレースホルダ解決(municipality → prefecture → national)
- *  - localStorage(ecn_preparedness_profile)保存・再表示・削除
- *
- * 制約: カード文言は data/options_catalog.json の原文をそのまま表示する。
- * 独自の医学的助言・事業者名・追記はしない。電話番号は tel: リンク。
- */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 (function () {
   'use strict';
 
   var STORAGE_KEY = 'ecn_preparedness_profile';
   var MEMO_KEY = 'ecn_care_memo';
 
-  // 設定値(仕様4.3 §2-4)。未整備地域の「追加リクエスト」送信先。
-  //   REQUEST_FORM_URL: 事前入力URL方式。基底URLの末尾(entry.NNN=)に市区町村名を
-  //     encodeURIComponent して連結する(requestUrl 参照)。別パラメータは付加しない。
-  //   未設定のときは REQUEST_MAIL_TO への mailto にフォールバックする。
-  //   送信するのは市区町村名だけ。診断の回答・体制メモは一切載せない。
-  // 設定済み(2026-07-20・事前入力URL方式): Googleフォームの質問1(entry.147722481)に
-  //   都道府県付きの市区町村名を事前入力する。REQUEST_MAIL_TO は未使用(空のまま)。
   var CONFIG = {
     REQUEST_FORM_URL: 'https://docs.google.com/forms/d/e/1FAIpQLSfNdQkHPwUGusWBU_m6ZH34dwqKXDpPm0AhbnyxSaL44XT4Vg/viewform?usp=pp_url&entry.147722481=',
     REQUEST_MAIL_TO: ''
@@ -33,8 +26,8 @@
 
   var state = {
     areaId: 'national',
-    areaPref: '',   // 選択された都道府県名(表示・検索リンク用)
-    areaMuni: '',   // 選択された市区町村名(表示・検索リンク用)
+    areaPref: '',
+    areaMuni: '',
     questions: [],
     index: 0,
     answers: {},
@@ -43,12 +36,11 @@
     flags: {},
     mirror: null,
     memo: {},
-    completed: [],     // [済んだので登録する]で準備済みにしたカードID(進捗)
-    todoSnapshot: [],  // 診断時点の未準備カードID(進捗の分母固定用)
+    completed: [],
+    todoSnapshot: [],
     diagnosed: false
   };
 
-  // 体制メモ(固有名)の項目定義。docs/planner_spec_v3.md 5章。
   var MEMO_FIELDS = [
     { group: 'ケアマネジャー', fields: [
       { key: 'care_manager_name', label: '氏名・事業所' },
@@ -78,7 +70,6 @@
     ] }
   ];
 
-  // 体制メモの各グループ ↔ カードの対応(進捗・トースト用)。
   var MEMO_GROUP_CARD = {
     'ケアマネジャー': 'care_manager',
     '駆けつけ役': 'family_responder',
@@ -88,9 +79,8 @@
     '鍵': 'key_access',
     '情報セット': 'info_set'
   };
-  var PROGRESS_KEY = 'ecn_preparedness_profile'; // 進捗は profile 内に保存(削除対象に含める)
+  var PROGRESS_KEY = 'ecn_preparedness_profile';
 
-  // ---- Phase 4.2: 線画アイコン(絵文字の置き換え。色/太さは CSS .icon で制御) ----
   var ICONS = {
     phone: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>',
     car: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 13l2-5.2A2 2 0 0 1 6.9 6.5h10.2a2 2 0 0 1 1.9 1.3L21 13v5h-3v-2H6v2H3z"/><circle cx="7.5" cy="16" r="1.6"/><circle cx="16.5" cy="16" r="1.6"/></svg>',
@@ -100,8 +90,6 @@
   };
   function icon(name) { return ICONS[name] || ''; }
 
-  // ---- Phase 4.2: 挿絵9点(自作SVG・線画。人物なし)。docs/phase4_2_spec.md 仕様4 ----
-  // 色はコンテナ側(.step-illus 等)の color を継承(currentColor)。差し色のみ深緑を明示。
   var ILLUS = {
     'hero': '<svg viewBox="0 0 400 180" role="img" aria-label="離れた二つの家を点線の道が結び、左の家から電話の音が広がる" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M60 104 L90 80 L120 104 M68 100 L68 140 L112 140 L112 100"/><path d="M280 104 L310 80 L340 104 M288 100 L288 140 L332 140 L332 100"/><path d="M120 142 Q200 168 288 142" stroke-dasharray="1 9"/><path d="M110 70 Q120 80 110 90 M118 62 Q134 80 118 98" stroke="var(--color-kaki)"/><path d="M356 40 C368 42 372 56 362 64 C352 58 350 44 356 40 Z M359 46 L363 60" stroke="var(--color-kaki)"/></g></svg>',
     'step-home': '<svg viewBox="0 0 48 48" role="img" aria-label="家と虫めがね" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 24 L22 13 L35 24 M13 21 L13 38 L31 38 L31 21"/><circle cx="31" cy="29" r="7"/><path d="M36 34 L42 40"/><path d="M16 30 L16 38 L22 38 L22 30" stroke="currentColor"/></g></svg>',
@@ -114,7 +102,6 @@
     'mame-door': '<svg viewBox="0 0 400 140" role="img" aria-label="縁側に置かれた二つの湯呑み" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M40 88 L360 88 L360 112 L40 112 Z"/><path d="M130 88 L130 112 M250 88 L250 112"/><path d="M70 44 L70 88 M330 44 L330 88 M55 44 L345 44"/><path d="M150 74 L152 88 L170 88 L172 74 Z"/><path d="M230 74 L232 88 L250 88 L252 74 Z"/><path d="M158 70 Q161 66 158 62 M240 70 Q243 66 240 62" stroke="var(--color-kaki)"/></g></svg>'
   };
   function illus(name) { return ILLUS[name] || ''; }
-  // 場面ID → 挿絵の対応(仕様4.5-4.8)
   var SCENE_ILLUS = {
     scene_no_answer: 'scene-phone',
     scene_fever: 'scene-fever',
@@ -122,23 +109,20 @@
     scene_caregiver_down: 'scene-handover'
   };
 
-  // 体制メモのグループが「入力済み」か(いずれかのフィールドに値)。
   function memoGroupFilled(memo, group) {
     return group.fields.some(function (f) { return memo && memo[f.key]; });
   }
-  // 利用者に推奨する体制メモ項目(対応カードが not_applicable でないグループ)。
   function recommendedMemoGroups() {
-    var base = RulesEngine.deriveCardStatuses(state.answers); // 上書き前の素の状態
+    var base = RulesEngine.deriveCardStatuses(state.answers);
     return MEMO_FIELDS.filter(function (g) {
       var cid = MEMO_GROUP_CARD[g.group];
       var card = cardById(cid);
       if (!card) return false;
-      if (card.status_type !== 'derived') return true; // 導出外(常時)は推奨に含める
+      if (card.status_type !== 'derived') return true;
       return base[cid] !== 'not_applicable';
     });
   }
 
-  // プレースホルダ: token → 地域オブジェクトからの取得方法・表示文言
   var PLACEHOLDER_DEFS = {
     emergency_call_system: {
       label: '緊急通報システム',
@@ -190,19 +174,14 @@
     }
   };
 
-  // ------- DOM ヘルパー -------
   function $(id) { return document.getElementById(id); }
 
   var SCREENS = ['screen-top', 'screen-home', 'screen-diagnosis', 'screen-mirror', 'screen-result', 'screen-emergency', 'screen-memo', 'screen-about', 'screen-mame'];
 
-  // 署名(屋号決定まで暫定)。ここ一箇所で差し替え可能(docs/phase3_1_patch.md E-3)。
-  // 仕様4.3 §1: {signature}機構は維持し、この文をデフォルト表示にする。
   var SIGNATURE = '埼玉県川口市から始めました。ここで確かめながら、全国へ広げていきます。';
 
-  // 各画面 → 3ステップ帯のハイライト位置
   var SCREEN_STEP = { 'screen-mirror': '1', 'screen-home': '2', 'screen-result': '2', 'screen-memo': '2', 'screen-emergency': '3' };
 
-  // 画面を切り替える本体。履歴には触らない(popstate からも使う)。
   function showRaw(screenId) {
     SCREENS.forEach(function (id) {
       var el = $(id);
@@ -211,9 +190,7 @@
     var band = $('step-band');
     if (SCREEN_STEP[screenId] && loadProfile()) renderStepBand(SCREEN_STEP[screenId]);
     else if (band) band.classList.add('hidden');
-    // トップを開くたびに第一ボタンの文言・遷移先を状態に合わせる(仕様5.2)
     if (screenId === 'screen-top') updateTopPrimary();
-    // 「← 戻る」帯とホームボタンはトップ以外で出す(仕様4.3 §4-2)
     var bar = $('back-bar');
     if (bar) bar.classList.toggle('hidden', screenId === 'screen-top');
     var homeBtn = $('home-btn');
@@ -221,7 +198,6 @@
     window.scrollTo(0, 0);
   }
 
-  // 画面遷移。ブラウザ履歴に1エントリ積むので、端末の戻るとも整合する(仕様4.3 §4-2)。
   function show(screenId) {
     if (currentScreen() !== screenId) {
       try { window.history.pushState({ screen: screenId }, ''); } catch (e) {}
@@ -229,14 +205,12 @@
     showRaw(screenId);
   }
 
-  // 直前の画面へ。ブラウザ履歴を1つ戻す(popstate 経由で showRaw が走る)。
   function goBack() {
     var st = window.history.state;
     if (st && st.screen && currentScreen() !== 'screen-top') window.history.back();
     else showRaw('screen-top');
   }
 
-  // トップの第一ボタン: 診断済みなら「わが家の備えに戻る」→ホーム、未診断なら診断開始(仕様5.2)
   function updateTopPrimary() {
     var btn = $('btn-start');
     if (!btn) return;
@@ -257,10 +231,7 @@
       .replace(/"/g, '&quot;');
   }
 
-  // ------- 表示層の変換(データ原文は書き換えない: 仕様4.3 §5 #12 / §2-2) -------
 
-  // 退役した場面ID。options_catalog.json の原文「scene_immobile(連絡が取れない)」より、
-  // 現行の scene_no_answer(電話に出ない・様子が分からない)に対応づける。
   var SCENE_ALIAS = { scene_immobile: 'scene_no_answer' };
 
   function sceneTitleById(id) {
@@ -272,7 +243,6 @@
     return null;
   }
 
-  // 文中の scene_xxx を場面の日本語名に置き換える(表示時のみ)
   function sceneNames(text) {
     return String(text == null ? '' : text).replace(/scene_[a-z_]+/g, function (id) {
       var t = sceneTitleById(id);
@@ -280,7 +250,6 @@
     });
   }
 
-  // 全国フォールバックの案内を、選択された市区町村名で個人化する
   function personalizeArea(text) {
     if (!state.areaMuni) return text;
     return String(text == null ? '' : text).replace(/\(市区町村名\)/g, state.areaMuni);
@@ -290,14 +259,12 @@
     return 'https://www.google.com/search?q=' + encodeURIComponent(q);
   }
 
-  // 「◯◯」で検索 → 検索リンクに組み立てる(esc 済みHTMLに対して適用)
   function linkifySearch(html) {
     return html.replace(/「([^「」]+)」で検索/g, function (whole, q) {
       return '<a href="' + searchUrl(q) + '" target="_blank" rel="noopener noreferrer">「' + q + '」で検索</a>';
     });
   }
 
-  // **強調** を <strong> に。tel: リンク化。改行を <br>。
   function boldMd(escaped) {
     return escaped.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
   }
@@ -307,41 +274,32 @@
       return '<a href="tel:' + m + '">' + m + '</a>';
     });
   }
-  // リッチテキスト(表示用): 場面名・地域の個人化 → エスケープ → 強調 → 電話/検索リンク → 改行
   function rich(text) {
     return linkifySearch(linkifyPhones(boldMd(esc(sceneNames(personalizeArea(text)))))).replace(/\n/g, '<br>');
   }
 
-  // 用語辞典(glossary)の語を本文中でタップ可能にする汎用機構。
-  // rich() 済みHTMLに対し、seen で語ごとに最初の1回だけボタン化(既存タグ内は避ける)。
   function linkGlossary(html, seen) {
     var g = state.data.glossary;
     if (!g || !g.terms) return html;
-    // 長い語から処理(部分一致の取りこぼし防止)
     var terms = g.terms.slice().sort(function (a, b) { return b.term.length - a.term.length; });
     terms.forEach(function (t) {
       if (seen[t.term]) return;
       var idx = html.indexOf(t.term);
       if (idx === -1) return;
-      // 直近の '<' と '>' を見て、タグの内側なら避ける(単純判定)
       var before = html.slice(0, idx);
       var lt = before.lastIndexOf('<'), gt = before.lastIndexOf('>');
-      if (lt > gt) return; // タグ属性内など → スキップ(次のブロックで拾う)
+      if (lt > gt) return;
       seen[t.term] = true;
       var btn = '<button type="button" class="glossary-term" data-term="' + esc(t.term) + '">' + esc(t.term) + '</button>';
       html = html.slice(0, idx) + btn + html.slice(idx + t.term.length);
     });
     return html;
   }
-  // rich + 用語リンク(seen は呼び出し側でカード単位に保持)
   function richG(text, seen) {
     return linkGlossary(rich(text), seen || {});
   }
 
-  // ------- 地域選択(全国: 都道府県 → 市区町村。仕様4.3 §2) -------
 
-  // areas.json に窓口情報がある市区町村だけが「整備済み」。
-  // 「都道府県名|市区町村名」→ area_id の対応表を作る。
   function supportedAreaMap() {
     var byId = {};
     var areas = (state.data.areas && state.data.areas.areas) || [];
@@ -360,10 +318,6 @@
     return supportedAreaMap()[pref + '|' + muni] || 'national';
   }
 
-  // 追加リクエストの送信先。市区町村名だけを載せる(仕様4.3 §2-4)。
-  // 事前入力URL方式: 基底URL(…entry.NNN=)の末尾に都道府県付きの市区町村名を
-  // encodeURIComponent して連結。市名が無い文脈(実際には存在しない)では空値のまま
-  // → 素の viewform が開く。別パラメータの付加はしない。
   function requestUrl(pref, muni) {
     var name = (pref || '') + (muni || '');
     if (CONFIG.REQUEST_FORM_URL) {
@@ -385,7 +339,6 @@
       box.innerHTML = '<p class="area-ready">' + esc(muni) + 'の窓口情報をご案内できます。</p>';
       return;
     }
-    // 未整備地域の案内(承認済み文言)
     var html = '';
     html += '<p>' + esc(muni) + 'の詳しい窓口情報は、まだ準備中です。<strong>下のボタンから追加をリクエストできます。</strong>' +
       'いただいたリクエストから数日以内に追加し、次にお越しいただいたときに反映されています。' +
@@ -434,7 +387,6 @@
     });
   }
 
-  // 保存済みプロフィールから地域選択の見た目を復元する
   function restoreAreaSelects() {
     var pref = $('area-pref'), muni = $('area-muni');
     if (!pref || !muni || !state.areaPref) return;
@@ -444,7 +396,6 @@
     renderAreaNotice();
   }
 
-  // ------- 地域解決 -------
   function buildChain(areaId) {
     var byId = {};
     state.data.areas.areas.forEach(function (a) { byId[a.area_id] = a; });
@@ -477,13 +428,10 @@
     return null;
   }
 
-  // 【】(回答値)を差し込んでから {token}(地域値)を解決。未解決トークンは空文字に。
-  //   bracketOpts: 準備済みカード用の { registered, time }(任意)
   function substitute(text, chain, bracketOpts) {
     var used = [];
     var seen = {};
     var opts = bracketOpts || {};
-    // 【駆けつけ役】は体制メモの登録名(なければ「駆けつけ役の方」)に解決する。
     if (opts.responder == null) opts.responder = (state.memo && state.memo.responder_name) || '';
     var filled = RulesEngine.fillBrackets(text, state.answers, opts);
     var out = String(filled == null ? '' : filled).replace(/\{(\w+)\}/g, function (whole, token) {
@@ -507,7 +455,6 @@
     return '<div class="checked-note"><span>' + parts.join('</span><span>') + '</span></div>';
   }
 
-  // ------- 質問フロー -------
   function flattenQuestions() {
     var list = [];
     state.data.questions.blocks.forEach(function (block) {
@@ -579,7 +526,6 @@
     var current = state.answers[q.id];
     var isNum = current != null && /^\d+$/.test(String(current));
 
-    // 10歳刻みチップ + 答えない
     var wrap = document.createElement('div');
     wrap.className = 'options age-chips';
     AGE_BANDS.forEach(function (b) {
@@ -598,7 +544,6 @@
     wrap.appendChild(skipChip);
     area.appendChild(wrap);
 
-    // 詳しく入力する(数値欄・折りたたみ)
     var detail = document.createElement('div');
     detail.className = 'age-detail' + (isNum ? '' : ' hidden');
     var input = document.createElement('input');
@@ -618,7 +563,7 @@
     link.addEventListener('click', function () {
       detail.classList.remove('hidden');
       link.classList.add('hidden');
-      if (input.value === '') input.value = '80'; // 空欄時は80から開始(矢印の起点)
+      if (input.value === '') input.value = '80';
       input.focus();
     });
     area.appendChild(link);
@@ -731,12 +676,10 @@
     else { state.index--; renderQuestion(); }
   }
 
-  // ------- 判定 & 保存 -------
   function todayStr() { return new Date().toISOString().slice(0, 10); }
 
   function computeDerived() {
     state.statuses = RulesEngine.deriveCardStatuses(state.answers);
-    // 完了登録(済んだので登録する)されたカードは準備済み扱いに上書き
     (state.completed || []).forEach(function (id) { if (state.statuses[id]) state.statuses[id] = 'available'; });
     state.flags = RulesEngine.deriveFlags(state.answers);
     state.mirror = RulesEngine.deriveMirror(state.answers);
@@ -747,12 +690,12 @@
   function finishDiagnosis() {
     state.completed = [];
     computeDerived();
-    state.todoSnapshot = orderedPreparableCards(); // 進捗の分母(未準備カード)を固定
+    state.todoSnapshot = orderedPreparableCards();
     var existing = loadProfile();
     var profile = {
       profile_version: PROFILE_VERSION,
       area_id: state.areaId,
-      area_pref: state.areaPref,   // 未整備地域でも案内を個人化するため名称を保存(仕様4.3 §2-2)
+      area_pref: state.areaPref,
       area_muni: state.areaMuni,
       answers: state.answers,
       flags: state.flags,
@@ -768,7 +711,6 @@
     if (!saved) notifySaveFailed();
   }
 
-  // ------- 状況の鏡 + テーマ宣言 -------
   function renderMirror(profile) {
     if (!state.mirror) computeDerived();
     var mc = state.data.mirror;
@@ -776,16 +718,14 @@
     var chain = buildChain(profile.area_id);
     var areaName = (chain[0] && chain[0].area_type !== 'national') ? chain[0].display_name : '';
 
-    // 文1: 親の状況(続柄+年齢+世帯+地域)
     var subject = mc.fact.relation_subject[a.q_parent_relation] || mc.fact.relation_subject['default'];
-    var agePhrase = RulesEngine.ageDisplay(a.q_parent_age); // 「87歳」/「80代」/ null
+    var agePhrase = RulesEngine.ageDisplay(a.q_parent_age);
     var agePart = agePhrase ? '(' + esc(agePhrase) + ')' : '';
     var household = mc.fact.household[a.q_household] || '';
     var s1 = esc(subject) + agePart + 'は';
     if (areaName) s1 += esc(areaName) + 'で';
     s1 += (household ? esc(household) : 'お住まい') + 'です。';
 
-    // 文2: 駆けつけ体制(距離+バックアップ+平日)
     var s2parts = [];
     if (mc.fact.distance[a.q_my_distance]) s2parts.push('あなたのお住まいからは' + esc(mc.fact.distance[a.q_my_distance]));
     if (mc.fact.backup[a.q_backup_person]) s2parts.push(esc(mc.fact.backup[a.q_backup_person]));
@@ -803,7 +743,6 @@
     html += '<div class="mirror-theme"><span class="mirror-theme-label">あなたの備えのテーマ</span>' +
       '<span class="mirror-theme-value">' + esc(themeLabel) + '</span></div>';
     html += '<p class="mirror-note">このあとの備えプランは、すべてこのテーマの答えとして並べています。</p>';
-    // ここからの流れ(Phase 3.2 仕様5)
     html += '<div class="mirror-flow"><h3 class="mirror-flow-h">ここからの流れ</h3>';
     html += '<p><strong>① わが家を知る</strong>(いま終わりました)</p>';
     html += '<p><strong>② 備えを整える</strong>──このあと出てくる「やること」を、できるものから一つずつ。済んだら登録してください。</p>';
@@ -812,14 +751,12 @@
     $('mirror-area').innerHTML = html;
   }
 
-  // 現行のプロフィール形式バージョン。これ以外は未診断として安全に扱う(監査バッチ1-2)。
   var PROFILE_VERSION = 3;
   function loadProfile() {
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return null;
       var p = JSON.parse(raw);
-      // 解釈不能(非オブジェクト)・旧バージョンは未診断扱い。既存データは破壊しない(消さない)。
       if (!p || typeof p !== 'object' || p.profile_version !== PROFILE_VERSION) return null;
       return p;
     } catch (e) { return null; }
@@ -828,17 +765,12 @@
     try { var raw = localStorage.getItem(MEMO_KEY); return raw ? JSON.parse(raw) : {}; }
     catch (e) { return {}; }
   }
-  // 保存失敗時の承認済み文言(監査バッチ1-1)。一字一句そのまま。
   var SAVE_FAIL_MSG = '保存できませんでした。プライベートブラウズ中や、端末の空き容量が少ないときに起こることがあります。';
-  // 診断途中の離脱警告文言(監査バッチ1-4)。一字一句そのまま(ブラウザ仕様で表示されない場合あり)。
   var DIAG_LEAVE_MSG = '回答の途中です。このページを離れると、ここまでの回答が消えます。';
-  // localStorage への保存。成功なら true、失敗(容量超過・プライベートモード等)なら false を返す。
-  // 空catchで握り潰さず、成否を呼び出し側へ伝えて偽の成功表示を防ぐ。
   function persist(key, value) {
     try { localStorage.setItem(key, value); return true; }
     catch (e) { return false; }
   }
-  // 保存失敗の通知。メモ画面など statusEl があればそこへ、無ければトーストで(チェックアイコンは出さない)。
   function notifySaveFailed(statusEl) {
     if (statusEl) { statusEl.textContent = SAVE_FAIL_MSG; return; }
     var root = $('toast-root');
@@ -863,7 +795,6 @@
     return persist(MEMO_KEY, JSON.stringify(memo));
   }
 
-  // ------- カード描画 -------
   function cardById(id) {
     var arr = state.data.catalog.cards;
     for (var i = 0; i < arr.length; i++) if (arr[i].card_id === id) return arr[i];
@@ -905,7 +836,6 @@
     return '<div class="emg-role"><span class="emg-role-h">いざという時の出番:</span> ' + rich(card.emergency_role) + '</div>';
   }
 
-  // FAQカードの連動リード(q_tax_status / q_techo に応じて先頭に表示)。
   function faqLeads(faq, chain, gseen) {
     if (!faq.leads) return '';
     var techoHas = state.answers.q_techo === 'level12' || state.answers.q_techo === 'level3';
@@ -922,11 +852,10 @@
     return html;
   }
 
-  // FAQ形式の本文(card_faq_v3.json)。用語はタップ辞典化(汎用)。
   function faqBody(card, chain) {
     var faq = state.data.faq && state.data.faq.faq_cards[card.card_id];
     if (!faq) return unpreparedBody(card, chain);
-    var gseen = {}; // 用語リンクはカード単位で語ごと初回のみ
+    var gseen = {};
     var html = '<p class="faq-heading">' + esc(faq.heading) + '</p>';
     if (card.target) html += '<p class="card-target">対象: ' + rich(card.target) + '</p>';
     html += faqLeads(faq, chain, gseen);
@@ -945,7 +874,6 @@
     return !!(state.data.faq && state.data.faq.faq_cards && state.data.faq.faq_cards[cardId]);
   }
 
-  // 高額介護サービス費(カード17)の負担上限。q_tax_status に連動(わからない=両パターン)。
   function taxLimitsBlock(card, chain) {
     var tl = card.tax_limits;
     if (!tl) return '';
@@ -962,7 +890,6 @@
     return html;
   }
 
-  // 個人事業主向けなど、カード末尾の補足リスト(work_leave の appendix)。
   function appendixBlock(card, chain) {
     var ap = card.appendix;
     if (!ap) return '';
@@ -972,7 +899,6 @@
     return html;
   }
 
-  // 未準備/知識/常時カードの本文(4節)
   function unpreparedBody(card, chain) {
     var html = '';
     if (card.target) html += '<p class="card-target">対象: ' + rich(card.target) + '</p>';
@@ -993,7 +919,6 @@
   }
 
   var DISTANCE_LABEL = { within30: '30分以内', within60: '1時間以内', within120: '2時間以内', over: '当日中は難しい' };
-  // 準備済みカードの 【登録した内容】/【時間】 に体制メモを差し込むためのオプション。
   function bracketOptsFor(cardId) {
     var m = state.memo || {};
     if (cardId === 'family_responder') return { registered: m.responder_name || '', time: DISTANCE_LABEL[state.answers.q_my_distance] || '' };
@@ -1003,7 +928,6 @@
     return {};
   }
 
-  // 準備済み(available)カードの本文
   function preparedBody(card, chain) {
     var opts = bracketOptsFor(card.card_id);
     var html = '<p class="prepared-mark">' + icon('check') + ' すでに使える手札です</p>';
@@ -1020,7 +944,6 @@
     return html;
   }
 
-  // 1枚のカードを描画。mode: 'open'(未準備・知識・特別) / 'available' / 'na'
   function renderCard(card, chain, status, mode) {
     var cls = 'card card-' + (status || card.status_type);
     var badge = '';
@@ -1032,25 +955,21 @@
     var body;
     if (mode === 'available') body = preparedBody(card, chain);
     else if (mode === 'na') body = naBody(card, chain);
-    else if (mode === 'reference') body = unpreparedBody(card, chain); // 常時使える情報カード(折りたたみ+全文)
+    else if (mode === 'reference') body = unpreparedBody(card, chain);
     else if (hasFaq(card.card_id)) body = faqBody(card, chain);
     else body = unpreparedBody(card, chain);
 
     if (mode === 'available' || mode === 'na' || mode === 'reference') {
-      // 折りたたみ
       return '<details id="card-' + esc(card.card_id) + '" class="' + cls + '"><summary class="card-summary">' +
         '<span class="card-name">' + esc(card.name) + '</span>' + badge + '</summary>' +
         '<div class="card-body">' + body + '</div></details>';
     }
-    // 展開表示
     return '<div id="card-' + esc(card.card_id) + '" class="' + cls + '"><div class="card-head"><span class="card-name">' + esc(card.name) + '</span>' + badge + '</div>' +
       '<div class="card-body">' + body + '</div></div>';
   }
 
-  // 準備済みカードのコンパクト表示(済 + 固有名 + 緊急時の出番)。
   function telLinkHtml(phone) {
     if (!phone) return '';
-    // 数字を除いた結果が空(例:「あとで」)なら発信リンクを作らない(監査バッチ1-6)。
     var dial = String(phone).replace(/[^0-9#+]/g, '');
     if (!dial) return '';
     return '<a href="tel:' + esc(dial) + '">' + esc(phone) + '</a>';
@@ -1067,7 +986,6 @@
       (card.emergency_role ? '<div class="done-role">いざという時: ' + rich(card.emergency_role) + '</div>' : '') + '</div>';
   }
 
-  // テーマ処方: 1テーマ分のカード群を描画。used に載せた card_id は以降スキップ。
   function renderThemeCards(themeId, chain, used) {
     var mc = state.data.mirror;
     var ids = (mc.theme_cards && mc.theme_cards[themeId]) || [];
@@ -1078,7 +996,7 @@
       if (!card) return;
       if (card.status_type === 'derived') {
         var st = state.statuses[id];
-        if (st === 'not_applicable') return; // その他の折りたたみへ回す(used にしない)
+        if (st === 'not_applicable') return;
         used[id] = true;
         body += st === 'available' ? compactDone(card) : renderCard(card, chain, 'preparable', 'open');
       } else if (card.status_type === 'knowledge') {
@@ -1088,14 +1006,12 @@
         used[id] = true;
         body += renderCard(card, chain, 'always', 'open');
       } else if (card.status_type === 'special') {
-        // self_down_plan は最上部で別途表示済み
         return;
       }
     });
     return body;
   }
 
-  // ------- 平時ビュー(処方=備えプラン) -------
   function renderResult(profile) {
     if (!state.statuses || !Object.keys(state.statuses).length) computeDerived();
     if (!state.mirror) computeDerived();
@@ -1118,10 +1034,10 @@
     var knowledge = cards.filter(function (c) { return c.status_type === 'knowledge' && CONDITIONAL_IDS.indexOf(c.card_id) === -1; });
     var yushoEligible = RulesEngine.fukushiYushoEligible(state.answers);
     var yushoCard = cardById('fukushi_yusho');
-    var taxiKenEligible = RulesEngine.fukushiTaxiKenEligible(state.answers); // 手帳あり(1・2級)で昇格
-    var parkingEligible = RulesEngine.parkingPermitEligible(state.answers);  // 手帳あり(1・2級/3級以下)で昇格
+    var taxiKenEligible = RulesEngine.fukushiTaxiKenEligible(state.answers);
+    var parkingEligible = RulesEngine.parkingPermitEligible(state.answers);
     var conditional = cards.filter(function (c) {
-      if (c.card_id === 'fukushi_taxi_ken') return !taxiKenEligible; // 昇格時は折りたたみから外す
+      if (c.card_id === 'fukushi_taxi_ken') return !taxiKenEligible;
       if (c.card_id === 'fukushi_yusho') return !yushoEligible;
       if (c.card_id === 'parking_permit') return !parkingEligible;
       return false;
@@ -1132,14 +1048,12 @@
 
     var html = '';
     html += '<h2 class="result-h2">あなたの備えプラン</h2>';
-    // テーマ宣言バナー(鏡と連動)
     var themeLabel = mc.theme_labels[state.mirror.theme] || '';
     html += '<div class="theme-banner"><span class="theme-banner-label">テーマ</span> ' + esc(themeLabel) +
       ' <button type="button" id="btn-back-mirror" class="link-btn">状況の鏡を見直す</button></div>';
     var availCount = derivedAvail.length + always.length;
     html += '<p class="summary-line">いま使える手札 <strong>' + availCount + '枚</strong> / 準備すれば増える手札 <strong>' + derivedPrep.length + '枚</strong></p>';
 
-    // ① ケアマネを処方の最上位に固定(未準備の場合・すべての入口のため / A-1)
     var cmCard = cardById('care_manager');
     if (cmCard && state.statuses.care_manager === 'preparable' && !used.care_manager) {
       used.care_manager = true;
@@ -1149,7 +1063,6 @@
       html += '</div>';
     }
 
-    // ②(w_work選択時)介護休業を上位固定
     if (worries.indexOf('w_work') !== -1) {
       var wl = cardById('work_leave');
       if (wl && !used.work_leave) {
@@ -1161,7 +1074,6 @@
       }
     }
 
-    // ③ テーマ順の処方(主テーマ → 選択した心配ごと → その他)
     var themeOrder = [state.mirror.theme];
     worries.forEach(function (w) {
       var t = mc.worry_theme[w];
@@ -1175,7 +1087,6 @@
       html += '<div class="group group-theme"><h3 class="group-h">' + esc(heading) + '</h3>' + body + '</div>';
     });
 
-    // ④ その他の備え(テーマに載らなかった手札)
     var otherAvail = derivedAvail.filter(function (c) { return !used[c.card_id]; });
     var otherAlways = always.filter(function (c) { return !used[c.card_id]; });
     var otherPrep = derivedPrep.filter(function (c) { return !used[c.card_id]; });
@@ -1187,7 +1098,6 @@
       html += '</div>';
     }
     if (otherKnow.length) {
-      // お金の制度(25/26/27)を w_money / 非課税 のとき上位化(27は非課税で先頭 / T4)
       var moneyPri = RulesEngine.moneyPriorityCards(state.answers);
       if (moneyPri.length) {
         otherKnow = otherKnow.slice().sort(function (a, b) {
@@ -1202,7 +1112,6 @@
       html += '</div>';
     }
 
-    // 手帳あり: 福祉タクシー券(1・2級)・駐車禁止等除外標章を「使える可能性のある補助」へ昇格(C-2.3 / Phase 4.1)
     var promotedIds = [];
     if (taxiKenEligible && cardById('fukushi_taxi_ken')) promotedIds.push('fukushi_taxi_ken');
     if (parkingEligible && cardById('parking_permit')) promotedIds.push('parking_permit');
@@ -1217,7 +1126,6 @@
       otherAvail.forEach(function (c) { html += renderCard(c, chain, 'available', 'available'); });
       html += '</div>';
     }
-    // いつでも使える相談・受診の窓口(119・#7119・Q助・地域包括 など / A-3)
     if (otherAlways.length) {
       html += '<div class="group"><h3 class="group-h">' + icon('phone') + 'いつでも使える相談・受診の窓口</h3>';
       html += '<p class="group-note">申し込み不要で、いざという時にそのまま使えます。タップして中身を確認しておきましょう。</p>';
@@ -1225,8 +1133,6 @@
       html += '</div>';
     }
 
-    // あなたが倒れたときの引き継ぎ: 処方の常時最後尾に固定(仕様4.3 §5 #14)。
-    // w_self_down を選んでいても最後尾。先に触れる役目は「状況の鏡」のテーマ側が担う。
     if (self21 && !used.self_down_plan) {
       used.self_down_plan = true;
       html += '<div class="group group-self-down"><h3 class="group-h">あなたが倒れたときの引き継ぎ(念のため)</h3>';
@@ -1234,14 +1140,12 @@
       html += '</div>';
     }
 
-    // 対象の方向けの制度(折りたたみ)
     html += '<div class="group">';
     html += '<details class="fold-group"><summary class="fold-group-h">対象の方向けの制度(手帳をお持ちの方・移動の支援)</summary><div class="fold-group-body">';
     conditional.forEach(function (c) { html += renderCard(c, chain, 'knowledge', 'open'); });
     html += '</div></details>';
     html += '</div>';
 
-    // 今は対象外(折りたたみ)
     var otherNa = derivedNa.filter(function (c) { return !used[c.card_id]; });
     if (otherNa.length) {
       html += '<div class="group">';
@@ -1251,7 +1155,6 @@
       html += '</div>';
     }
 
-    // すべての制度・サービスを見る(参照ページ)
     html += '<div class="group"><details class="fold-group"><summary class="fold-group-h">すべての制度・サービスを見る(' + cards.length + '枚の一覧)</summary><div class="fold-group-body">';
     cards.forEach(function (c) {
       var st = c.status_type === 'derived' ? state.statuses[c.card_id] : null;
@@ -1261,13 +1164,10 @@
     });
     html += '</div></details></div>';
 
-    // この先の見取り図(処方末尾・固定セクション / T3)
     html += renderBlueprint();
 
-    // 番外編への入口(見取り図の下 / Phase 4.1)
     html += '<p class="mame-entry"><button type="button" class="link-btn link-mame">' + icon('chevron') + ' 現場で知った小さなこと(番外編)</button></p>';
 
-    // 家族に送るテキスト(引き継ぎ書)
     html += '<h2 class="result-h2">家族に送るテキスト(引き継ぎ書)</h2>';
     html += '<p class="result-intro">下の文章をコピーして、LINEやメールで家族に共有できます。あなたが倒れたときの引き継ぎ書としても使えます。</p>';
     var familyText = buildFamilyText(profile, chain, derivedAvail, derivedPrep);
@@ -1276,11 +1176,9 @@
     html += '<div class="share-actions"><button type="button" id="btn-copy" class="btn btn-secondary">' + icon('copy') + ' テキストをコピー</button>';
     html += '<span id="copy-status" class="copy-status" role="status"></span></div></div>';
 
-    // 体制メモへの導線
     html += '<div class="emg-cta"><p>ケアマネさんや駆けつけ役の名前・電話を<strong>体制メモ</strong>に登録しておくと、緊急時ガイドが「○○さんに電話」と固有名で案内します。</p>';
     html += '<button type="button" id="btn-goto-memo" class="btn btn-secondary">体制メモを開く</button></div>';
 
-    // 緊急時ビューへの導線
     html += '<div class="emg-cta"><p>いざという時は、このページの下ではなく<strong>【場面別ガイド】</strong>を開いてください。ブックマーク・印刷しておくと安心です。</p>';
     html += '<button type="button" id="btn-goto-emergency" class="btn btn-primary">場面別ガイドを開く</button></div>';
 
@@ -1296,9 +1194,7 @@
     if (backMirror) backMirror.addEventListener('click', function () { renderMirror(profile); show('screen-mirror'); });
   }
 
-  // ------- 緊急時ビュー(場面別ガイド) -------
   function activeScenes() {
-    // 全4場面。caregiver_down は F_self_down_gap でも必ず有効(常時表示)。
     return state.data.scenes.scenes;
   }
 
@@ -1313,7 +1209,6 @@
       var b = document.createElement('button');
       b.type = 'button';
       b.className = 'scene-btn';
-      // 場面の線画挿絵(仕様4.5-4.8)+ 原文タイトル
       b.innerHTML = '<span class="scene-illus">' + illus(SCENE_ILLUS[sc.scene_id] || '') + '</span>' +
         '<span class="scene-label">' + esc(sc.title) + '</span>';
       b.addEventListener('click', function () {
@@ -1373,12 +1268,9 @@
     return html;
   }
 
-  // 手順内のカード参照。登録済みの固有名+tel: で表示。not_applicable は非表示、
-  // 未登録かつ preparable は「(未準備)→備える」で処方へリンク。
   function cardChip(id, chain) {
     var card = cardById(id);
     if (!card) return '';
-    // 未診断(一般形): 固有名も(未準備)も出さず、カード名+緊急番号のみ表示
     if (!state.diagnosed) {
       var t0 = '';
       if (id === 'call_119') t0 = '<a class="chip-tel" href="tel:119">発信</a>';
@@ -1397,13 +1289,11 @@
     else if (res && res.registered) {
       cls += ' chip-avail';
       if (res.name) label += '<span class="chip-name">' + esc((res.prefix || '') + res.name) + '</span>';
-      // 数字を除いた結果が空なら「発信」ボタンを出さない(監査バッチ1-6)。
       if (res.phone) {
         var dial = String(res.phone).replace(/[^0-9#+]/g, '');
         if (dial) tel = '<a class="chip-tel" href="tel:' + esc(dial) + '">発信</a>';
       }
     } else if (card.status_type === 'derived' && st === 'preparable') {
-      // 未登録(固有名スロットの有無を問わず)かつ準備段階 → (未準備)+処方へリンク
       cls += ' chip-prep';
       suffix = '<button type="button" class="chip-goto" data-goto-card="' + esc(id) + '">(未準備)→備える</button>';
     } else if (card.status_type === 'derived' && st === 'available') {
@@ -1414,7 +1304,6 @@
     return '<span class="' + cls + '">' + label + suffix + tel + '</span>';
   }
 
-  // ------- 引き継ぎ書テキスト -------
   function buildFamilyText(profile, chain, avail, prep) {
     var L = [];
     L.push('【親の急変への備え／引き継ぎメモ】');
@@ -1445,7 +1334,6 @@
   }
   function firstLine(t) { var i = String(t).indexOf('\n'); return (i === -1 ? String(t) : String(t).slice(0, i)); }
 
-  // ------- コピー -------
   function copyText(text, statusId) {
     var status = statusId ? $(statusId) : null;
     function done() { if (status) { status.textContent = 'コピーしました'; setTimeout(function () { if (status) status.textContent = ''; }, 3000); } }
@@ -1457,30 +1345,25 @@
     }
   }
 
-  // 台本コピー / 未準備チップ→処方リンク(イベント委譲)
   function bindScriptCopy() {
     document.body.addEventListener('click', function (e) {
       var btn = e.target;
-      // 番外編ページへの入口
       if (btn && btn.classList && btn.classList.contains('link-mame')) {
         e.preventDefault();
         openMame();
         return;
       }
-      // 用語辞典: 語をタップ→モーダル(閉じると元の位置に戻る)
       if (btn && btn.classList && btn.classList.contains('glossary-term')) {
         e.preventDefault();
         openGlossary(btn.getAttribute('data-term'));
         return;
       }
-      // 用語モーダル / 見取り図 からカードへ
       if (btn && btn.classList && btn.classList.contains('glossary-goto')) {
         e.preventDefault();
         closeGlossary();
         gotoCardInResult(btn.getAttribute('data-goto-card'));
         return;
       }
-      // 見取り図: セクションへスクロール
       if (btn && btn.classList && btn.classList.contains('bp-link') && btn.getAttribute('data-scroll')) {
         e.preventDefault();
         scrollToSection(btn.getAttribute('data-scroll'));
@@ -1511,7 +1394,6 @@
     });
   }
 
-  // ------- 体制メモ -------
   function openMemo() {
     state.memo = loadMemo();
     renderMemoForm();
@@ -1525,7 +1407,6 @@
       html += '<fieldset class="memo-group"><legend>' + esc(g.group) + '</legend>';
       g.fields.forEach(function (f) {
         var val = m[f.key] != null ? m[f.key] : '';
-        // 常識的な入力上限(監査バッチ1-6): 電話20 / 自由記入200 / 氏名等50。
         var maxlen = f.tel ? 20 : (f.wide ? 200 : 50);
         html += '<label class="memo-label">' + esc(f.label) +
           '<input type="' + (f.tel ? 'tel' : 'text') + '" class="memo-input' + (f.wide ? ' memo-wide' : '') +
@@ -1549,7 +1430,6 @@
     if (p) { restoreProfile(p); renderResult(p); show('screen-result'); }
     else show('screen-top');
   }
-  // 緊急ガイドの「(未準備)→備える」から処方の該当カードへ
   function gotoCardInResult(cardId) {
     var p = loadProfile();
     if (p) { restoreProfile(p); renderResult(p); }
@@ -1560,7 +1440,6 @@
     }, 60);
   }
 
-  // ================= Phase 3.2: 流れの可視化 =================
 
   function firstSentence(t) {
     t = String(t == null ? '' : t);
@@ -1568,12 +1447,10 @@
     return i === -1 ? t : t.slice(0, i + 1);
   }
 
-  // 未準備カードを処方の表示順で返す(engine に委譲。完了登録済みは除外)。
   function orderedPreparableCards() {
     return RulesEngine.orderedPreparableCards(state.answers, state.data.catalog, state.data.mirror, state.completed);
   }
 
-  // 進捗 x/y。分母 = 診断時の未準備カード数 + 推奨メモ項目数、分子 = 完了カード + 入力済みメモ。
   function computeProgress() {
     var snap = (state.todoSnapshot && state.todoSnapshot.length) ? state.todoSnapshot : orderedPreparableCards();
     var completed = state.completed || [];
@@ -1596,13 +1473,9 @@
     return persist(STORAGE_KEY, JSON.stringify(p));
   }
 
-  // ------- ホーム(次の一手) -------
   function openHome() {
     var p = loadProfile();
     if (!p) { show('screen-top'); return; }
-    // プロフィール起因の例外を封じ込め、JSON読込失敗の扱いに合流させない(監査バッチ1-2)。
-    // 起動時はこの関数が init() の .then 内で走るため、ここで throw すると誤って
-    // 「データを読み込めませんでした」に落ちてしまう。失敗時は安全にトップ(未診断)へ。
     try {
       restoreProfile(p);
       renderHome();
@@ -1656,7 +1529,6 @@
     $('home-delete').addEventListener('click', deleteData);
   }
 
-  // [済んだので登録する]: カードを準備済みに切り替え、進捗+1、次の一手を繰り上げ、因果トースト。
   function markCardDone(cardId) {
     if (state.completed.indexOf(cardId) === -1) state.completed.push(cardId);
     var saved = saveProgress();
@@ -1667,7 +1539,6 @@
     if (!saved) notifySaveFailed();
   }
 
-  // ------- 3ステップの帯 -------
   var STEP_META = [
     { key: '1', label: 'わが家を知る', illus: 'step-home' },
     { key: '2', label: '備えを整える', illus: 'step-prepare' },
@@ -1683,10 +1554,8 @@
     var html = '';
     STEP_META.forEach(function (s, i) {
       if (i > 0) html += '<span class="step-arrow" aria-hidden="true">→</span>';
-      // ③(いざという時)がアクティブなのは緊急ビュー=119バナー隣接。柿を避け深緑にする(仕様8-4)
       var cls = 'step-item' + (s.key === active ? ' step-active' + (active === '3' ? ' step-active-emg' : '') : '');
       var extra = (s.key === '2') ? '<span class="step-extra">(' + prog.x + '/' + prog.y + ')</span>' : '';
-      // 各ステップに線画挿絵(仕様4.2-4.4)。番号円は廃し、絵と原文ラベルで示す
       html += '<button type="button" class="' + cls + '" data-step="' + s.key + '">' +
         '<span class="step-illus">' + illus(s.illus) + '</span>' +
         '<span class="step-label">' + esc(s.label) + extra + '</span></button>';
@@ -1705,7 +1574,6 @@
     else if (step === '3') { openEmergency(); }
   }
 
-  // ------- 因果トースト -------
   function findSceneStepForCard(cardId) {
     var scenes = state.data.scenes.scenes;
     for (var i = 0; i < scenes.length; i++) {
@@ -1790,8 +1658,6 @@
     }, 70);
   }
 
-  // トップ共感ブロックの「もし自分のほうが急に入院したら」の飛び先(仕様4.3 §6)。
-  // 診断済み: 固有名つきの scene_caregiver_down 分岐B / 未診断: 一般形の同分岐B。
   function openCaregiverDownB() {
     var p = loadProfile();
     if (p) restoreProfile(p);
@@ -1806,7 +1672,6 @@
     renderBranchedScene(list[idx], 'B', buildChain(state.areaId));
   }
 
-  // 「いま困っている」: 診断済みなら固有名つき、未診断なら一般形でガイドを開く。
   function panicOpen() {
     var p = loadProfile();
     if (p) { restoreProfile(p); }
@@ -1814,7 +1679,6 @@
     openEmergency();
   }
 
-  // ------- 用語辞典(glossary)モーダル -------
   function openGlossary(term) {
     var g = state.data.glossary;
     if (!g) return;
@@ -1822,7 +1686,7 @@
     if (!entry) return;
     $('glossary-title').textContent = entry.name;
     var gseen = {};
-    gseen[entry.term] = true; // 見出し語自身は本文でリンク化しない
+    gseen[entry.term] = true;
     var body = '<div class="glossary-def">' + richG(entry.def, gseen) + '</div>';
     if (entry.ref_card) {
       body += '<p class="glossary-ref"><button type="button" class="link-btn glossary-goto" data-goto-card="' +
@@ -1834,7 +1698,6 @@
   }
   function closeGlossary() { $('glossary-modal').classList.add('hidden'); }
 
-  // ------- この先の見取り図(処方末尾・固定セクション) -------
   function renderBlueprint() {
     var gseen = {};
     var h = '<div class="group blueprint"><h2 class="result-h2">この先の見取り図──「もしも」の先まで</h2>';
@@ -1854,7 +1717,6 @@
     if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); el.classList.add('card-flash'); }
   }
 
-  // ------- 番外編: 現場で知った小さなこと -------
   function currentScreen() {
     for (var i = 0; i < SCREENS.length; i++) {
       var el = $(SCREENS[i]);
@@ -1864,12 +1726,10 @@
   }
   function renderMame() {
     var m = state.data.mame;
-    // 番外編の扉: 縁側と湯呑みの挿絵(仕様4.9)
     var html = '<div class="mame-door-illus">' + illus('mame-door') + '</div>';
     html += '<h2 class="result-h2">' + esc(m.title) + '</h2>';
     html += '<p class="mame-intro">' + rich(m.intro) + '</p>';
     html += '<p class="mame-note">' + esc(m.note_line) + '</p>';
-    // 一時非表示の項目は出さない。復帰手順: data/mame.json の該当項目から "hidden": true の行を消す。
     m.items.filter(function (it) { return !it.hidden; }).forEach(function (it) {
       html += '<details class="mame-item"><summary class="mame-summary">' + esc(it.title) +
         (it.experience ? '<span class="mame-exp">〔開発者の体験から〕</span>' : '') + '</summary>' +
@@ -1883,14 +1743,12 @@
     show('screen-mame');
   }
 
-  // ------- 開発者より -------
   function openAbout() {
     var sig = $('about-signature');
     if (sig) sig.textContent = SIGNATURE;
     show('screen-about');
   }
 
-  // ------- 起動 -------
   function startDiagnosis() {
     state.index = 0;
     state.answers = {};
@@ -1914,23 +1772,18 @@
     COST_DISCLAIMER = state.data.catalog.cost_disclaimer;
     CATEGORY_LABELS = state.data.catalog.category_labels;
     bindAreaSelects();
-    updateTopPrimary(); // btn-start の文言・onclick は状態に応じて設定(仕様5.2)
-    // 全画面共通ヘッダーのサイトタイトル → トップへ(仕様5.1)
+    updateTopPrimary();
     var siteTitle = $('site-title');
     if (siteTitle) siteTitle.addEventListener('click', function () { show('screen-top'); });
-    // 全画面共通の「← 戻る」+ 端末の戻る操作(仕様4.3 §4-2)
     var globalBack = $('btn-global-back');
     if (globalBack) globalBack.addEventListener('click', goBack);
-    // 右下のホーム(題字タップと同じ動作。トップ以外の全画面で表示)
     var homeBtn = $('home-btn');
     if (homeBtn) homeBtn.addEventListener('click', function () { show('screen-top'); });
     try { window.history.replaceState({ screen: 'screen-top' }, ''); } catch (e) {}
-    // 診断進行中(1問以上回答済み・未完了)のみ離脱警告(監査バッチ1-4)。
-    // 診断画面を離れる=finishで鏡へ / トップ復帰 すると条件が偽になり自動的に解除される。
     window.addEventListener('beforeunload', function (e) {
       if (currentScreen() === 'screen-diagnosis' && Object.keys(state.answers).length >= 1) {
         e.preventDefault();
-        e.returnValue = DIAG_LEAVE_MSG; // 多くのブラウザは固定文言を出すが仕様に沿って設定
+        e.returnValue = DIAG_LEAVE_MSG;
         return DIAG_LEAVE_MSG;
       }
     });
@@ -1947,7 +1800,6 @@
       if (p) { renderResult(p); show('screen-result'); } else show('screen-top');
     });
 
-    // 状況の鏡ナビ
     $('btn-mirror-next').addEventListener('click', function () {
       var p = loadProfile() || { area_id: state.areaId, answers: state.answers };
       renderResult(p);
@@ -1958,19 +1810,16 @@
       else show('screen-top');
     });
 
-    // 開発者より
     var linkAbout = $('link-about');
     if (linkAbout) linkAbout.addEventListener('click', openAbout);
     $('btn-about-back').addEventListener('click', function () { show('screen-top'); });
 
-    // 番外編ページ: 戻る(開いた元の画面へ)
     $('btn-mame-back').addEventListener('click', function () {
       var ret = state.mameReturn || 'screen-top';
       if (ret === 'screen-result') { var p = loadProfile(); if (p) { restoreProfile(p); renderResult(p); } }
       show(ret);
     });
 
-    // 体制メモ
     $('btn-open-memo').addEventListener('click', openMemo);
     $('btn-memo-back').addEventListener('click', backToResult);
     $('btn-memo-save').addEventListener('click', function () {
@@ -1978,9 +1827,7 @@
       state.memo = collectMemo();
       var saved = saveMemo(state.memo);
       var s = $('memo-status');
-      // 保存に失敗したら偽の成功表示をせず、承認済み文言を出して終了(監査バッチ1-1)
       if (!saved) { notifySaveFailed(s); return; }
-      // 新規に固有名が入ったグループを検出し、因果トーストを出す(仕様3)。保存成功時のみ。
       var newly = MEMO_FIELDS.filter(function (g) { return memoGroupFilled(state.memo, g) && !memoGroupFilled(oldMemo, g); });
       if (newly.length) {
         var cid = MEMO_GROUP_CARD[newly[0].group];
@@ -2000,17 +1847,13 @@
       if (s) { s.textContent = '消去しました'; setTimeout(function () { if (s) s.textContent = ''; }, 3000); }
     });
 
-    // ランディングから「支える側が倒れた・分岐B」へ(仕様4.3 §6)。
-    // 共感ブロックの引用文中のリンクと、「このサイトができること」内のリンクの両方。
     ['link-self-down-quote', 'link-caregiver-down'].forEach(function (id) {
       var el = $(id);
       if (el) el.addEventListener('click', function (e) { e.preventDefault(); openCaregiverDownB(); });
     });
 
-    // 「いま困っている」固定ボタン(全画面・未診断でも一般形ガイド)
     $('panic-btn').addEventListener('click', panicOpen);
 
-    // 用語辞典モーダルを閉じる
     $('glossary-close').addEventListener('click', closeGlossary);
     $('glossary-backdrop').addEventListener('click', closeGlossary);
 
@@ -2021,13 +1864,11 @@
       restoreAreaSelects();
       $('btn-resume').addEventListener('click', function () { restoreProfile(profile); renderResult(profile); show('screen-result'); });
       $('btn-emergency-top').addEventListener('click', function () { restoreProfile(profile); openEmergency(); });
-      // 2回目以降の入口 = ホーム(次の一手)
       openHome();
     }
   }
 
   function deleteData() {
-    // 進捗・準備済み切り替えも profile 内。体制メモも含めて全消去(サーバー送信なし)。
     try { localStorage.removeItem(STORAGE_KEY); localStorage.removeItem(MEMO_KEY); } catch (e) {}
     state.answers = {};
     state.statuses = {};
@@ -2073,11 +1914,9 @@
       state.data.municipalities = res[9];
       bindTopControls();
     }).catch(function (err) {
-      if (window.console && console.error) console.error(err); // 詳細は開発者コンソールへ
-      // 承認済み文言(監査バッチ1-2)。一字一句そのまま。
+      if (window.console && console.error) console.error(err);
       var html = '<div class="privacy-box">' +
         'データを読み込めませんでした。お手数ですが、ページを再読み込みしてください。';
-      // 「file://では動作しません」の案内は file: プロトコルのときだけ分離表示。
       if (location.protocol === 'file:') {
         html += '<br>この画面は <code>file://</code> では動作しません。' +
           'README の起動方法(<code>npx serve</code> 等)でローカルサーバー経由で開いてください。';

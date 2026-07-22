@@ -1,81 +1,299 @@
 {
-  "schema_version": 2,
-  "note": "docs/options_catalog_spec_v2.md 3章 + docs/card_copy_v2_additions.md の分岐定義に準拠。cardsはoptions_catalog.jsonのcard_id参照。statusがnot_applicableのカードは手順から除外、preparableは『(未準備)』と明示。scene_caregiver_down は branches を持ち、既定分岐は q_household で決まる(切替可)。",
-  "danger_banner": {
-    "text": "意識がない・呼びかけに反応しない・息が苦しそう・胸の痛み → ためらわず119番",
-    "card": "call_119",
-    "always_visible": true
-  },
-  "scenes": [
+ "schema_version": 2,
+ "danger_banner": {
+  "text": "意識がない・呼びかけに反応しない・息が苦しそう・胸の痛み → ためらわず119番",
+  "card": "call_119",
+  "always_visible": true
+ },
+ "scenes": [
+  {
+   "scene_id": "scene_no_answer",
+   "title": "電話に出ない・様子が分からない",
+   "lead": "介護離職で一番多いのは大きな急変ではなく、この「連絡が取れない→見に行く」の反復です。まず“行かずに分かる”順に確認します。",
+   "steps": [
     {
-      "scene_id": "scene_no_answer",
-      "title": "電話に出ない・様子が分からない",
-      "lead": "介護離職で一番多いのは大きな急変ではなく、この「連絡が取れない→見に行く」の反復です。まず“行かずに分かる”順に確認します。",
-      "steps": [
-        { "step": 1, "title": "まず本人に電話", "instruction": "本人に電話する。出たら、意識ははっきりしているか・息苦しさはないか・強い痛みはないかを確認する。危険サインが一つでもあれば、ためらわず119番。", "cards": ["call_119"] },
-        { "step": 2, "title": "見守り・通報センターに照会(あれば)", "instruction": "緊急通報システムや見守りサービスを利用中なら、受信センターや通知履歴に「今朝の動きがあるか」を照会する。ここで分かれば、行かずに済むことが多い。", "cards": ["emergency_call_system", "watch_service"] },
-        { "step": 3, "title": "ヘルパー・近隣に確認を依頼", "instruction": "ヘルパー利用中なら次回訪問の予定を確認、または近隣・親族に「様子を見てもらえるか」を依頼する。あなたが動く前に、近い人の目を先に使う。", "cards": ["helper_office", "family_responder"] },
-        { "step": 4, "title": "駆けつけて家に入る", "instruction": "ここまでで分からなければ、駆けつけ役が向かい、決めてある入室手段で安否を確認する。", "cards": ["family_responder", "key_access"] },
-        { "step": 5, "title": "危険が疑われれば119", "instruction": "誰も入れず安否が分からない、または危険が疑われる場合は、119番に住所と状況を伝えて相談する。離れた場所から本人宅へ救急車を呼ぶこともできる。", "cards": ["call_119"] }
-      ]
+     "step": 1,
+     "title": "まず本人に電話",
+     "instruction": "本人に電話する。出たら、意識ははっきりしているか・息苦しさはないか・強い痛みはないかを確認する。危険サインが一つでもあれば、ためらわず119番。",
+     "cards": [
+      "call_119"
+     ]
     },
     {
-      "scene_id": "scene_fever",
-      "title": "急に熱を出した・様子がおかしい",
-      "steps": [
-        { "step": 1, "title": "危険サインの確認", "instruction": "電話で本人やヘルパーさんに聞く: 意識ははっきりしているか / 息苦しさはないか / 水分は取れているか / いつもと明らかに違う様子はないか。一つでも怪しければためらわず119番。", "cards": ["call_119"] },
-        { "step": 2, "title": "受診の要否を相談", "instruction": "救急車を呼ぶほどか迷ったら電話で相談。伝えること: 年齢・熱の高さ・いつから・持病・普段との違い。電話が苦手なときはQ助でも緊急度の目安を確認できる。", "cards": ["sharp7119", "q_jyosuke"] },
-        { "step": 3, "title": "現場の様子を見てもらう", "instruction": "利用中なら、次回訪問の前倒しや臨時対応を依頼する。", "cards": ["helper_office", "visiting_nurse"] },
-        { "step": 4, "title": "誰が行くか", "instruction": "決めてある駆けつけ役に連絡する。", "cards": ["family_responder"] },
-        { "step": 5, "title": "家に入る", "instruction": "本人が玄関を開けられない場合に備え、入る手段を確認。", "cards": ["key_access"] },
-        { "step": 6, "title": "受診が必要になったら", "instruction": "まずかかりつけ医へ。時間外なら当番医。移動手段は介護タクシー・福祉有償運送または家族の車。", "cards": ["family_doctor", "touban_i", "care_taxi", "fukushi_yusho", "fukushi_taxi_ken", "family_responder"] },
-        { "step": 7, "title": "持っていくもの", "instruction": "保険証・お薬手帳・介護保険証。", "cards": ["info_set"] },
-        { "step": 8, "title": "落ち着いたら", "instruction": "ケアマネさんに経過を報告し、今後の体制(訪問回数・見守り)を相談する。", "cards": ["care_manager"] }
-      ]
+     "step": 2,
+     "title": "見守り・通報センターに照会(あれば)",
+     "instruction": "緊急通報システムや見守りサービスを利用中なら、受信センターや通知履歴に「今朝の動きがあるか」を照会する。ここで分かれば、行かずに済むことが多い。",
+     "cards": [
+      "emergency_call_system",
+      "watch_service"
+     ]
     },
     {
-      "scene_id": "scene_fall",
-      "title": "転倒した・体を打った",
-      "steps": [
-        { "step": 1, "title": "危険サインの確認", "instruction": "動けない・意識がない・強い痛み・出血・頭を打った、のいずれかがあれば119番。本人をむやみに動かさない。", "cards": ["call_119"] },
-        { "step": 2, "title": "迷ったら相談", "instruction": "打った場所や痛みの程度を伝えて、受診の要否を相談する。電話が苦手なときはQ助でも緊急度の目安を確認できる。", "cards": ["sharp7119", "q_jyosuke"] },
-        { "step": 3, "title": "現場確認と入室", "instruction": "駆けつけ役に連絡し、家に入る手段を確認。利用中ならヘルパー事業所にも連絡。", "cards": ["family_responder", "key_access", "helper_office"] },
-        { "step": 4, "title": "受診・移動", "instruction": "かかりつけ医(時間外は当番医)へ。移動は介護タクシー・福祉有償運送または家族の車。", "cards": ["family_doctor", "touban_i", "care_taxi", "fukushi_yusho", "fukushi_taxi_ken"] },
-        { "step": 5, "title": "持っていくもの", "instruction": "保険証・お薬手帳・介護保険証。", "cards": ["info_set"] },
-        { "step": 6, "title": "落ち着いたら", "instruction": "転倒は繰り返しやすい。ケアマネさんに報告し、住まいの環境や歩行の見直しを相談する。", "cards": ["care_manager"] }
-      ]
+     "step": 3,
+     "title": "ヘルパー・近隣に確認を依頼",
+     "instruction": "ヘルパー利用中なら次回訪問の予定を確認、または近隣・親族に「様子を見てもらえるか」を依頼する。あなたが動く前に、近い人の目を先に使う。",
+     "cards": [
+      "helper_office",
+      "family_responder"
+     ]
     },
     {
-      "scene_id": "scene_caregiver_down",
-      "title": "支える側が倒れた・動けなくなった",
-      "branch_prompt": "どちらの状況ですか?",
-      "default_branch_rule": "q_household == 'always_someone' → A / else B",
-      "branches": [
-        {
-          "branch_id": "A",
-          "label": "同居して支えている家族が倒れた",
-          "default_if": "q_household == 'always_someone'",
-          "steps": [
-            { "step": 1, "title": "倒れた本人の対応が最優先", "instruction": "倒れた本人の対応が最優先。危険サインがあれば119番。", "cards": ["call_119"] },
-            { "step": 2, "title": "残された親御さんの今夜からの体制", "instruction": "ケアマネさんに電話し、緊急ショートステイの可否を相談する。", "cards": ["care_manager", "short_stay"] },
-            { "step": 3, "title": "ケアマネさんがいない場合", "instruction": "地域包括支援センターに電話する(川口市は時間外も電話相談可)。", "cards": ["chiiki_houkatsu"] },
-            { "step": 4, "title": "つなぎの体制", "instruction": "ヘルパーの臨時追加や、家族・親族の応援でつなぐ。", "cards": ["helper_office", "family_responder"] },
-            { "step": 5, "title": "見通しが立ったら", "instruction": "介護休業(体制構築のための休み・給付67%)を確認する。", "cards": ["work_leave"] }
-          ]
-        },
-        {
-          "branch_id": "B",
-          "label": "離れて支えている主担当(あなた)が倒れた",
-          "default_if": "else",
-          "steps": [
-            { "step": 1, "title": "まず自分の治療に専念する段取りを", "instruction": "まず自分の治療に専念する段取りを。収入は傷病手当金で守られます。", "cards": ["shobyo_teate"] },
-            { "step": 2, "title": "家族へ第一報＋引き継ぎテキストの転送", "instruction": "家族へ第一報し、引き継ぎテキストを転送する。「私の代わりに、まずケアマネさんの◯◯さんに連絡してほしい」と一言添える。", "cards": ["self_down_plan"] },
-            { "step": 3, "title": "代わりの人からケアマネさんへ", "instruction": "代わりの人からケアマネさんへ:「主担当が◯週間動けません。訪問回数を臨時に増やせますか」。", "cards": ["care_manager"] },
-            { "step": 4, "title": "一人の時間が長くなるようなら", "instruction": "緊急ショートステイの検討。", "cards": ["short_stay"] },
-            { "step": 5, "title": "復帰の目処が立ったら", "instruction": "体制の見直しをケアマネさんと(あなたに負荷が集中しない形へ)。", "cards": ["care_manager"] }
-          ]
-        }
-      ]
+     "step": 4,
+     "title": "駆けつけて家に入る",
+     "instruction": "ここまでで分からなければ、駆けつけ役が向かい、決めてある入室手段で安否を確認する。",
+     "cards": [
+      "family_responder",
+      "key_access"
+     ]
+    },
+    {
+     "step": 5,
+     "title": "危険が疑われれば119",
+     "instruction": "誰も入れず安否が分からない、または危険が疑われる場合は、119番に住所と状況を伝えて相談する。離れた場所から本人宅へ救急車を呼ぶこともできる。",
+     "cards": [
+      "call_119"
+     ]
     }
-  ]
+   ]
+  },
+  {
+   "scene_id": "scene_fever",
+   "title": "急に熱を出した・様子がおかしい",
+   "steps": [
+    {
+     "step": 1,
+     "title": "危険サインの確認",
+     "instruction": "電話で本人やヘルパーさんに聞く: 意識ははっきりしているか / 息苦しさはないか / 水分は取れているか / いつもと明らかに違う様子はないか。一つでも怪しければためらわず119番。",
+     "cards": [
+      "call_119"
+     ]
+    },
+    {
+     "step": 2,
+     "title": "受診の要否を相談",
+     "instruction": "救急車を呼ぶほどか迷ったら電話で相談。伝えること: 年齢・熱の高さ・いつから・持病・普段との違い。電話が苦手なときはQ助でも緊急度の目安を確認できる。",
+     "cards": [
+      "sharp7119",
+      "q_jyosuke"
+     ]
+    },
+    {
+     "step": 3,
+     "title": "現場の様子を見てもらう",
+     "instruction": "利用中なら、次回訪問の前倒しや臨時対応を依頼する。",
+     "cards": [
+      "helper_office",
+      "visiting_nurse"
+     ]
+    },
+    {
+     "step": 4,
+     "title": "誰が行くか",
+     "instruction": "決めてある駆けつけ役に連絡する。",
+     "cards": [
+      "family_responder"
+     ]
+    },
+    {
+     "step": 5,
+     "title": "家に入る",
+     "instruction": "本人が玄関を開けられない場合に備え、入る手段を確認。",
+     "cards": [
+      "key_access"
+     ]
+    },
+    {
+     "step": 6,
+     "title": "受診が必要になったら",
+     "instruction": "まずかかりつけ医へ。時間外なら当番医。移動手段は介護タクシー・福祉有償運送または家族の車。",
+     "cards": [
+      "family_doctor",
+      "touban_i",
+      "care_taxi",
+      "fukushi_yusho",
+      "fukushi_taxi_ken",
+      "family_responder"
+     ]
+    },
+    {
+     "step": 7,
+     "title": "持っていくもの",
+     "instruction": "保険証・お薬手帳・介護保険証。",
+     "cards": [
+      "info_set"
+     ]
+    },
+    {
+     "step": 8,
+     "title": "落ち着いたら",
+     "instruction": "ケアマネさんに経過を報告し、今後の体制(訪問回数・見守り)を相談する。",
+     "cards": [
+      "care_manager"
+     ]
+    }
+   ]
+  },
+  {
+   "scene_id": "scene_fall",
+   "title": "転倒した・体を打った",
+   "steps": [
+    {
+     "step": 1,
+     "title": "危険サインの確認",
+     "instruction": "動けない・意識がない・強い痛み・出血・頭を打った、のいずれかがあれば119番。本人をむやみに動かさない。",
+     "cards": [
+      "call_119"
+     ]
+    },
+    {
+     "step": 2,
+     "title": "迷ったら相談",
+     "instruction": "打った場所や痛みの程度を伝えて、受診の要否を相談する。電話が苦手なときはQ助でも緊急度の目安を確認できる。",
+     "cards": [
+      "sharp7119",
+      "q_jyosuke"
+     ]
+    },
+    {
+     "step": 3,
+     "title": "現場確認と入室",
+     "instruction": "駆けつけ役に連絡し、家に入る手段を確認。利用中ならヘルパー事業所にも連絡。",
+     "cards": [
+      "family_responder",
+      "key_access",
+      "helper_office"
+     ]
+    },
+    {
+     "step": 4,
+     "title": "受診・移動",
+     "instruction": "かかりつけ医(時間外は当番医)へ。移動は介護タクシー・福祉有償運送または家族の車。",
+     "cards": [
+      "family_doctor",
+      "touban_i",
+      "care_taxi",
+      "fukushi_yusho",
+      "fukushi_taxi_ken"
+     ]
+    },
+    {
+     "step": 5,
+     "title": "持っていくもの",
+     "instruction": "保険証・お薬手帳・介護保険証。",
+     "cards": [
+      "info_set"
+     ]
+    },
+    {
+     "step": 6,
+     "title": "落ち着いたら",
+     "instruction": "転倒は繰り返しやすい。ケアマネさんに報告し、住まいの環境や歩行の見直しを相談する。",
+     "cards": [
+      "care_manager"
+     ]
+    }
+   ]
+  },
+  {
+   "scene_id": "scene_caregiver_down",
+   "title": "支える側が倒れた・動けなくなった",
+   "branch_prompt": "どちらの状況ですか?",
+   "branches": [
+    {
+     "branch_id": "A",
+     "label": "同居して支えている家族が倒れた",
+     "steps": [
+      {
+       "step": 1,
+       "title": "倒れた本人の対応が最優先",
+       "instruction": "倒れた本人の対応が最優先。危険サインがあれば119番。",
+       "cards": [
+        "call_119"
+       ]
+      },
+      {
+       "step": 2,
+       "title": "残された親御さんの今夜からの体制",
+       "instruction": "ケアマネさんに電話し、緊急ショートステイの可否を相談する。",
+       "cards": [
+        "care_manager",
+        "short_stay"
+       ]
+      },
+      {
+       "step": 3,
+       "title": "ケアマネさんがいない場合",
+       "instruction": "地域包括支援センターに電話する(川口市は時間外も電話相談可)。",
+       "cards": [
+        "chiiki_houkatsu"
+       ]
+      },
+      {
+       "step": 4,
+       "title": "つなぎの体制",
+       "instruction": "ヘルパーの臨時追加や、家族・親族の応援でつなぐ。",
+       "cards": [
+        "helper_office",
+        "family_responder"
+       ]
+      },
+      {
+       "step": 5,
+       "title": "見通しが立ったら",
+       "instruction": "介護休業(体制構築のための休み・給付67%)を確認する。",
+       "cards": [
+        "work_leave"
+       ]
+      }
+     ]
+    },
+    {
+     "branch_id": "B",
+     "label": "離れて支えている主担当(あなた)が倒れた",
+     "steps": [
+      {
+       "step": 1,
+       "title": "まず自分の治療に専念する段取りを",
+       "instruction": "まず自分の治療に専念する段取りを。収入は傷病手当金で守られます。",
+       "cards": [
+        "shobyo_teate"
+       ]
+      },
+      {
+       "step": 2,
+       "title": "家族へ第一報＋引き継ぎテキストの転送",
+       "instruction": "家族へ第一報し、引き継ぎテキストを転送する。「私の代わりに、まずケアマネさんの◯◯さんに連絡してほしい」と一言添える。",
+       "cards": [
+        "self_down_plan"
+       ]
+      },
+      {
+       "step": 3,
+       "title": "代わりの人からケアマネさんへ",
+       "instruction": "代わりの人からケアマネさんへ:「主担当が◯週間動けません。訪問回数を臨時に増やせますか」。",
+       "cards": [
+        "care_manager"
+       ]
+      },
+      {
+       "step": 4,
+       "title": "一人の時間が長くなるようなら",
+       "instruction": "緊急ショートステイの検討。",
+       "cards": [
+        "short_stay"
+       ]
+      },
+      {
+       "step": 5,
+       "title": "復帰の目処が立ったら",
+       "instruction": "体制の見直しをケアマネさんと(あなたに負荷が集中しない形へ)。",
+       "cards": [
+        "care_manager"
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
 }

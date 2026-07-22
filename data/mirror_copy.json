@@ -1,95 +1,139 @@
 {
-  "schema_version": 3,
-  "note": "docs/planner_spec_v3.md 3章。patterns の implication は spec 3.2『含意文の型(承認済みパターン)』の原文を転記。fact_* は利用者自身の回答を事実として言い換えるための語彙(医学的助言・創作ではない)。数値・続柄・年齢・地域は回答から差し込み、未回答は一般形にフォールバックする。",
-  "fact": {
-    "relation_subject": { "mother": "お母様", "father": "お父様", "both": "ご両親", "other": "親御さん", "default": "親御さん" },
-    "household": {
-      "alone": "一人暮らし",
-      "elderly_couple": "高齢のご夫婦のみの世帯",
-      "daytime_alone": "同居だが日中は一人",
-      "always_someone": "常に誰かが同居"
-    },
-    "distance": {
-      "within30": "30分以内",
-      "within60": "1時間以内",
-      "within120": "2時間以内",
-      "over": "当日中に着くのは難しい距離"
-    },
-    "backup": {
-      "within30": "あなた以外にも30分以内に来られる方がいます",
-      "within60": "あなた以外に1時間以内に来られる方がいます",
-      "far": "あなた以外に来られる方はいますが、時間がかかります",
-      "none": "あなた以外に、すぐ駆けつけられる人はいません"
-    },
-    "weekday": {
-      "yes": "平日の日中もすぐ動ける状況です",
-      "no": "平日の日中は、仕事などですぐには動けない状況です"
-    },
-    "templates": {
-      "sentence1_prefix": "",
-      "sentence1_household_join": "で、",
-      "sentence1_suffix": "です。",
-      "sentence2_prefix": "あなたのお住まいからは",
-      "sentence2_join": "、"
-    }
+ "schema_version": 3,
+ "fact": {
+  "relation_subject": {
+   "mother": "お母様",
+   "father": "お父様",
+   "both": "ご両親",
+   "other": "親御さん",
+   "default": "親御さん"
   },
-  "worry_theme": {
-    "w_no_answer": "T_unknown_time",
-    "w_memory": "T_public_link",
-    "w_fall": "T_fall",
-    "w_emergency_flow": "T_playbook",
-    "w_self_down": "T_self_down",
-    "w_money": "T_money",
-    "w_work": "T_work"
+  "household": {
+   "alone": "一人暮らし",
+   "elderly_couple": "高齢のご夫婦のみの世帯",
+   "daytime_alone": "同居だが日中は一人",
+   "always_someone": "常に誰かが同居"
   },
-  "theme_labels": {
-    "T_unknown_time": "『分からない時間』を埋める",
-    "T_self_down": "あなたが倒れたときの備えを作る",
-    "T_first_hour": "気づいてからの最初の1時間を埋める",
-    "T_daytime_gap": "平日日中の空白を埋める",
-    "T_public_link": "公的な支援につなぐ",
-    "T_fall": "転倒に備える",
-    "T_playbook": "急変時の動き方を決めておく",
-    "T_money": "お金の制度を知っておく",
-    "T_work": "仕事を辞めずに済む形を作る",
-    "T_maintain": "いまの体制を『生きた状態』に保つ"
+  "distance": {
+   "within30": "30分以内",
+   "within60": "1時間以内",
+   "within120": "2時間以内",
+   "over": "当日中に着くのは難しい距離"
   },
-  "theme_cards": {
-    "T_unknown_time": ["emergency_call_system", "watch_service", "key_access"],
-    "T_self_down": ["self_down_plan", "short_stay", "shobyo_teate", "work_leave"],
-    "T_first_hour": ["family_responder", "key_access", "emergency_call_system"],
-    "T_daytime_gap": ["family_responder", "care_taxi", "emergency_call_system"],
-    "T_public_link": ["care_manager", "family_doctor", "chiiki_houkatsu"],
-    "T_fall": ["care_manager", "care_taxi", "family_doctor"],
-    "T_playbook": ["sharp7119", "family_doctor", "care_taxi", "info_set"],
-    "T_money": ["work_leave", "kougaku_kaigo", "shobyo_teate"],
-    "T_work": ["work_leave"],
-    "T_maintain": ["info_set", "care_manager"]
+  "backup": {
+   "within30": "あなた以外にも30分以内に来られる方がいます",
+   "within60": "あなた以外に1時間以内に来られる方がいます",
+   "far": "あなた以外に来られる方はいますが、時間がかかります",
+   "none": "あなた以外に、すぐ駆けつけられる人はいません"
   },
-  "patterns": {
-    "A": {
-      "theme": "T_first_hour",
-      "implication": "『様子がおかしい』と気づいてから最初の1時間、現地に目がありません。この1時間を埋める仕組みが備えの核心になります"
-    },
-    "B": {
-      "theme": "T_self_down",
-      "implication": "急変には強い家です。弱点は逆側にあります。あなたが入院したら…『あなたの代わり』を用意しておくことです"
-    },
-    "C": {
-      "theme": "T_daytime_gap",
-      "implication": "平日の昼に何かあったとき、駆けつけは夕方になります"
-    },
-    "C_prime": {
-      "theme": "T_public_link",
-      "implication": "公的な支援はまだ一つもこの家につながっていません。最初の一本(地域包括への電話)で、それが変わります"
-    },
-    "D": {
-      "theme": "T_unknown_time",
-      "implication": "この家の問題は、急変そのものより『分からない時間』です。それを埋める役は、あなたの早退ではなく、仕組みに任せられます"
-    },
-    "default": {
-      "theme": "T_maintain",
-      "implication": "基本の体制は揃っています。あとは『生きた状態』に保つこと──連絡先の共有と、年に一度の見直しです"
-    }
+  "weekday": {
+   "yes": "平日の日中もすぐ動ける状況です",
+   "no": "平日の日中は、仕事などですぐには動けない状況です"
+  },
+  "templates": {
+   "sentence1_prefix": "",
+   "sentence1_household_join": "で、",
+   "sentence1_suffix": "です。",
+   "sentence2_prefix": "あなたのお住まいからは",
+   "sentence2_join": "、"
   }
+ },
+ "worry_theme": {
+  "w_no_answer": "T_unknown_time",
+  "w_memory": "T_public_link",
+  "w_fall": "T_fall",
+  "w_emergency_flow": "T_playbook",
+  "w_self_down": "T_self_down",
+  "w_money": "T_money",
+  "w_work": "T_work"
+ },
+ "theme_labels": {
+  "T_unknown_time": "『分からない時間』を埋める",
+  "T_self_down": "あなたが倒れたときの備えを作る",
+  "T_first_hour": "気づいてからの最初の1時間を埋める",
+  "T_daytime_gap": "平日日中の空白を埋める",
+  "T_public_link": "公的な支援につなぐ",
+  "T_fall": "転倒に備える",
+  "T_playbook": "急変時の動き方を決めておく",
+  "T_money": "お金の制度を知っておく",
+  "T_work": "仕事を辞めずに済む形を作る",
+  "T_maintain": "いまの体制を『生きた状態』に保つ"
+ },
+ "theme_cards": {
+  "T_unknown_time": [
+   "emergency_call_system",
+   "watch_service",
+   "key_access"
+  ],
+  "T_self_down": [
+   "self_down_plan",
+   "short_stay",
+   "shobyo_teate",
+   "work_leave"
+  ],
+  "T_first_hour": [
+   "family_responder",
+   "key_access",
+   "emergency_call_system"
+  ],
+  "T_daytime_gap": [
+   "family_responder",
+   "care_taxi",
+   "emergency_call_system"
+  ],
+  "T_public_link": [
+   "care_manager",
+   "family_doctor",
+   "chiiki_houkatsu"
+  ],
+  "T_fall": [
+   "care_manager",
+   "care_taxi",
+   "family_doctor"
+  ],
+  "T_playbook": [
+   "sharp7119",
+   "family_doctor",
+   "care_taxi",
+   "info_set"
+  ],
+  "T_money": [
+   "work_leave",
+   "kougaku_kaigo",
+   "shobyo_teate"
+  ],
+  "T_work": [
+   "work_leave"
+  ],
+  "T_maintain": [
+   "info_set",
+   "care_manager"
+  ]
+ },
+ "patterns": {
+  "A": {
+   "theme": "T_first_hour",
+   "implication": "『様子がおかしい』と気づいてから最初の1時間、現地に目がありません。この1時間を埋める仕組みが備えの核心になります"
+  },
+  "B": {
+   "theme": "T_self_down",
+   "implication": "急変には強い家です。弱点は逆側にあります。あなたが入院したら…『あなたの代わり』を用意しておくことです"
+  },
+  "C": {
+   "theme": "T_daytime_gap",
+   "implication": "平日の昼に何かあったとき、駆けつけは夕方になります"
+  },
+  "C_prime": {
+   "theme": "T_public_link",
+   "implication": "公的な支援はまだ一つもこの家につながっていません。最初の一本(地域包括への電話)で、それが変わります"
+  },
+  "D": {
+   "theme": "T_unknown_time",
+   "implication": "この家の問題は、急変そのものより『分からない時間』です。それを埋める役は、あなたの早退ではなく、仕組みに任せられます"
+  },
+  "default": {
+   "theme": "T_maintain",
+   "implication": "基本の体制は揃っています。あとは『生きた状態』に保つこと──連絡先の共有と、年に一度の見直しです"
+  }
+ }
 }

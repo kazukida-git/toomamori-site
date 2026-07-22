@@ -1,137 +1,381 @@
 {
-  "schema_version": 1,
-  "note": "docs/preparedness_plan_spec_v1.md 1章に準拠。unknown(わからない)は判定時に安全側(no相当)として扱う。",
-  "blocks": [
+ "schema_version": 1,
+ "blocks": [
+  {
+   "block_id": "b1_parent",
+   "title": "親御さんの状況",
+   "questions": [
     {
-      "block_id": "b1_parent",
-      "title": "親御さんの状況",
-      "questions": [
-        { "id": "q_parent_relation", "text": "どなたのことですか?", "type": "select_optional", "optional": true,
-          "hint": "鏡や案内文を自然にするための任意項目です。答えなくても診断できます。",
-          "options": [
-            { "value": "mother", "label": "母" },
-            { "value": "father", "label": "父" },
-            { "value": "both", "label": "両親" },
-            { "value": "other", "label": "その他" }
-          ] },
-        { "id": "q_parent_age", "text": "年齢は?(だいたいで構いません)", "type": "age_optional", "optional": true,
-          "hint": "任意項目です。入れると案内文に反映します。答えなくても診断できます。" },
-        { "id": "q_household", "text": "親御さんの世帯構成は?", "type": "select",
-          "options": [
-            { "value": "alone", "label": "一人暮らし" },
-            { "value": "elderly_couple", "label": "高齢夫婦のみ" },
-            { "value": "daytime_alone", "label": "同居だが日中は一人" },
-            { "value": "always_someone", "label": "常に誰かがいる" }
-          ] },
-        { "id": "q_care_level", "text": "要介護認定は?", "type": "select",
-          "options": [
-            { "value": "none", "label": "なし" },
-            { "value": "applying", "label": "申請中" },
-            { "value": "yoshien", "label": "要支援" },
-            { "value": "yokaigo", "label": "要介護" },
-            { "value": "unknown", "label": "わからない" }
-          ] },
-        { "id": "q_care_manager", "text": "ケアマネジャーはいますか?", "type": "yn_unknown" },
-        { "id": "q_family_doctor", "text": "かかりつけ医はいますか?", "type": "yn_unknown" },
-        { "id": "q_services", "text": "利用中のサービスは?(あてはまるもの全部)", "type": "multi",
-          "options": [
-            { "value": "helper", "label": "ヘルパー" },
-            { "value": "day_service", "label": "デイサービス" },
-            { "value": "visiting_nurse", "label": "訪問看護" },
-            { "value": "none", "label": "なし" }
-          ] },
-        { "id": "q_self_report", "text": "本人は電話で自分の状態を説明できますか?", "type": "yn_unknown" },
-        { "id": "q_cognition", "text": "認知症や判断力の低下はありますか?", "type": "yn_unknown" },
-        { "id": "q_fall_history", "text": "転倒歴や歩行の不安はありますか?", "type": "yn_unknown" },
-        { "id": "q_tax_status", "text": "親御さんの住民税は?(市からの通知や、非課税証明で分かります)", "type": "select_optional", "optional": true,
-          "hint": "任意項目です。お金の制度の負担上限のご案内に使います。「わからない」を選ぶと両方の目安を表示します。",
-          "options": [
-            { "value": "kazei", "label": "課税されている" },
-            { "value": "hikazei", "label": "非課税" },
-            { "value": "unknown", "label": "わからない" }
-          ] },
-        { "id": "q_techo", "text": "障害者手帳をお持ちですか?", "type": "select_optional", "optional": true,
-          "hint": "任意項目です。使える補助のご案内に使います。",
-          "options": [
-            { "value": "none", "label": "なし" },
-            { "value": "level12", "label": "あり(1・2級)" },
-            { "value": "level3", "label": "あり(3級以下)" },
-            { "value": "unknown", "label": "わからない" }
-          ] }
-      ]
+     "id": "q_parent_relation",
+     "text": "どなたのことですか?",
+     "type": "select_optional",
+     "optional": true,
+     "hint": "鏡や案内文を自然にするための任意項目です。答えなくても診断できます。",
+     "options": [
+      {
+       "value": "mother",
+       "label": "母"
+      },
+      {
+       "value": "father",
+       "label": "父"
+      },
+      {
+       "value": "both",
+       "label": "両親"
+      },
+      {
+       "value": "other",
+       "label": "その他"
+      }
+     ]
     },
     {
-      "block_id": "b2_response",
-      "title": "駆けつけ体制",
-      "questions": [
-        { "id": "q_my_distance", "text": "あなたから親御さんの家までの所要時間は?", "type": "select",
-          "options": [
-            { "value": "within30", "label": "30分以内" },
-            { "value": "within60", "label": "1時間以内" },
-            { "value": "within120", "label": "2時間以内" },
-            { "value": "over", "label": "当日中は難しい" }
-          ] },
-        { "id": "q_backup_person", "text": "あなた以外に駆けつけられる人はいますか?", "type": "select",
-          "options": [
-            { "value": "within30", "label": "いる(30分以内)" },
-            { "value": "within60", "label": "いる(1時間以内)" },
-            { "value": "far", "label": "いる(それ以上)" },
-            { "value": "none", "label": "いない" }
-          ] },
-        { "id": "q_weekday_availability", "text": "平日の日中、あなたはすぐ動けますか?", "type": "select",
-          "options": [
-            { "value": "yes", "label": "動ける" },
-            { "value": "no", "label": "仕事等で難しい" }
-          ] },
-        { "id": "q_self_down_backup", "text": "もしあなた自身が1〜2週間動けなくなったら(急な入院など)、親御さんの日常を代わりに支えられる人やサービスはありますか?", "type": "select",
-          "options": [
-            { "value": "yes", "label": "いる・ある" },
-            { "value": "no", "label": "いない・ない" },
-            { "value": "unknown", "label": "わからない" }
-          ] }
-      ]
+     "id": "q_parent_age",
+     "text": "年齢は?(だいたいで構いません)",
+     "type": "age_optional",
+     "optional": true,
+     "hint": "任意項目です。入れると案内文に反映します。答えなくても診断できます。"
     },
     {
-      "block_id": "b3_key_info",
-      "title": "鍵と情報",
-      "questions": [
-        { "id": "q_key_access", "text": "家族以外(または離れた家族)が家に入る手段は?", "type": "select",
-          "options": [
-            { "value": "neighbor_key", "label": "近隣・親族が合鍵を持っている" },
-            { "value": "key_box", "label": "キーボックスがある" },
-            { "value": "key_service", "label": "鍵預かりサービスを利用" },
-            { "value": "none", "label": "ない" }
-          ] },
-        { "id": "q_info_location", "text": "保険証・お薬手帳・介護保険証の場所を、家族の複数人が知っていますか?", "type": "yn_unknown" },
-        { "id": "q_contact_shared", "text": "ケアマネさん・かかりつけ医の連絡先を家族間で共有していますか?", "type": "yn_unknown" }
-      ]
+     "id": "q_household",
+     "text": "親御さんの世帯構成は?",
+     "type": "select",
+     "options": [
+      {
+       "value": "alone",
+       "label": "一人暮らし"
+      },
+      {
+       "value": "elderly_couple",
+       "label": "高齢夫婦のみ"
+      },
+      {
+       "value": "daytime_alone",
+       "label": "同居だが日中は一人"
+      },
+      {
+       "value": "always_someone",
+       "label": "常に誰かがいる"
+      }
+     ]
     },
     {
-      "block_id": "b4_existing",
-      "title": "いまある備え",
-      "questions": [
-        { "id": "q_emergency_call_system", "text": "自治体の緊急通報システムを利用していますか?", "type": "yn_unknown" },
-        { "id": "q_watch_service", "text": "見守りサービス(センサー・訪問など)を利用していますか?", "type": "yn_unknown" },
-        { "id": "q_care_taxi", "text": "介護タクシーに事前登録していますか?", "type": "yn_unknown" },
-        { "id": "q_short_stay", "text": "ショートステイの利用経験、または候補の当てはありますか?", "type": "yn_unknown" }
-      ]
+     "id": "q_care_level",
+     "text": "要介護認定は?",
+     "type": "select",
+     "options": [
+      {
+       "value": "none",
+       "label": "なし"
+      },
+      {
+       "value": "applying",
+       "label": "申請中"
+      },
+      {
+       "value": "yoshien",
+       "label": "要支援"
+      },
+      {
+       "value": "yokaigo",
+       "label": "要介護"
+      },
+      {
+       "value": "unknown",
+       "label": "わからない"
+      }
+     ]
     },
     {
-      "block_id": "b5_worry",
-      "title": "いま気がかりなこと",
-      "questions": [
-        { "id": "q_worries", "text": "いま、気がかりなことはどれですか(いくつでも)", "type": "worry_multi", "optional": true,
-          "hint": "選ぶと、あなたの備えプランの並び順に反映します。当てはまらなければ選ばなくて構いません。",
-          "options": [
-            { "value": "w_no_answer", "label": "電話に出ないことがあり、そのたびに不安になる(見に行くこともある)" },
-            { "value": "w_memory", "label": "物忘れや、同じ話をすることが増えてきた" },
-            { "value": "w_fall", "label": "転倒が怖い(ふらついている・転んだことがある)" },
-            { "value": "w_emergency_flow", "label": "急に体調を崩したとき、自分がどう動けばいいか分からない" },
-            { "value": "w_self_down", "label": "自分が倒れたら、親はどうなるのか" },
-            { "value": "w_money", "label": "介護にお金がどのくらいかかるのか分からない" },
-            { "value": "w_work", "label": "仕事と両立できるか不安(休みや早退が増えている)" }
-          ] }
-      ]
+     "id": "q_care_manager",
+     "text": "ケアマネジャーはいますか?",
+     "type": "yn_unknown"
+    },
+    {
+     "id": "q_family_doctor",
+     "text": "かかりつけ医はいますか?",
+     "type": "yn_unknown"
+    },
+    {
+     "id": "q_services",
+     "text": "利用中のサービスは?(あてはまるもの全部)",
+     "type": "multi",
+     "options": [
+      {
+       "value": "helper",
+       "label": "ヘルパー"
+      },
+      {
+       "value": "day_service",
+       "label": "デイサービス"
+      },
+      {
+       "value": "visiting_nurse",
+       "label": "訪問看護"
+      },
+      {
+       "value": "none",
+       "label": "なし"
+      }
+     ]
+    },
+    {
+     "id": "q_self_report",
+     "text": "本人は電話で自分の状態を説明できますか?",
+     "type": "yn_unknown"
+    },
+    {
+     "id": "q_cognition",
+     "text": "認知症や判断力の低下はありますか?",
+     "type": "yn_unknown"
+    },
+    {
+     "id": "q_fall_history",
+     "text": "転倒歴や歩行の不安はありますか?",
+     "type": "yn_unknown"
+    },
+    {
+     "id": "q_tax_status",
+     "text": "親御さんの住民税は?(市からの通知や、非課税証明で分かります)",
+     "type": "select_optional",
+     "optional": true,
+     "hint": "任意項目です。お金の制度の負担上限のご案内に使います。「わからない」を選ぶと両方の目安を表示します。",
+     "options": [
+      {
+       "value": "kazei",
+       "label": "課税されている"
+      },
+      {
+       "value": "hikazei",
+       "label": "非課税"
+      },
+      {
+       "value": "unknown",
+       "label": "わからない"
+      }
+     ]
+    },
+    {
+     "id": "q_techo",
+     "text": "障害者手帳をお持ちですか?",
+     "type": "select_optional",
+     "optional": true,
+     "hint": "任意項目です。使える補助のご案内に使います。",
+     "options": [
+      {
+       "value": "none",
+       "label": "なし"
+      },
+      {
+       "value": "level12",
+       "label": "あり(1・2級)"
+      },
+      {
+       "value": "level3",
+       "label": "あり(3級以下)"
+      },
+      {
+       "value": "unknown",
+       "label": "わからない"
+      }
+     ]
     }
-  ]
+   ]
+  },
+  {
+   "block_id": "b2_response",
+   "title": "駆けつけ体制",
+   "questions": [
+    {
+     "id": "q_my_distance",
+     "text": "あなたから親御さんの家までの所要時間は?",
+     "type": "select",
+     "options": [
+      {
+       "value": "within30",
+       "label": "30分以内"
+      },
+      {
+       "value": "within60",
+       "label": "1時間以内"
+      },
+      {
+       "value": "within120",
+       "label": "2時間以内"
+      },
+      {
+       "value": "over",
+       "label": "当日中は難しい"
+      }
+     ]
+    },
+    {
+     "id": "q_backup_person",
+     "text": "あなた以外に駆けつけられる人はいますか?",
+     "type": "select",
+     "options": [
+      {
+       "value": "within30",
+       "label": "いる(30分以内)"
+      },
+      {
+       "value": "within60",
+       "label": "いる(1時間以内)"
+      },
+      {
+       "value": "far",
+       "label": "いる(それ以上)"
+      },
+      {
+       "value": "none",
+       "label": "いない"
+      }
+     ]
+    },
+    {
+     "id": "q_weekday_availability",
+     "text": "平日の日中、あなたはすぐ動けますか?",
+     "type": "select",
+     "options": [
+      {
+       "value": "yes",
+       "label": "動ける"
+      },
+      {
+       "value": "no",
+       "label": "仕事等で難しい"
+      }
+     ]
+    },
+    {
+     "id": "q_self_down_backup",
+     "text": "もしあなた自身が1〜2週間動けなくなったら(急な入院など)、親御さんの日常を代わりに支えられる人やサービスはありますか?",
+     "type": "select",
+     "options": [
+      {
+       "value": "yes",
+       "label": "いる・ある"
+      },
+      {
+       "value": "no",
+       "label": "いない・ない"
+      },
+      {
+       "value": "unknown",
+       "label": "わからない"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "block_id": "b3_key_info",
+   "title": "鍵と情報",
+   "questions": [
+    {
+     "id": "q_key_access",
+     "text": "家族以外(または離れた家族)が家に入る手段は?",
+     "type": "select",
+     "options": [
+      {
+       "value": "neighbor_key",
+       "label": "近隣・親族が合鍵を持っている"
+      },
+      {
+       "value": "key_box",
+       "label": "キーボックスがある"
+      },
+      {
+       "value": "key_service",
+       "label": "鍵預かりサービスを利用"
+      },
+      {
+       "value": "none",
+       "label": "ない"
+      }
+     ]
+    },
+    {
+     "id": "q_info_location",
+     "text": "保険証・お薬手帳・介護保険証の場所を、家族の複数人が知っていますか?",
+     "type": "yn_unknown"
+    },
+    {
+     "id": "q_contact_shared",
+     "text": "ケアマネさん・かかりつけ医の連絡先を家族間で共有していますか?",
+     "type": "yn_unknown"
+    }
+   ]
+  },
+  {
+   "block_id": "b4_existing",
+   "title": "いまある備え",
+   "questions": [
+    {
+     "id": "q_emergency_call_system",
+     "text": "自治体の緊急通報システムを利用していますか?",
+     "type": "yn_unknown"
+    },
+    {
+     "id": "q_watch_service",
+     "text": "見守りサービス(センサー・訪問など)を利用していますか?",
+     "type": "yn_unknown"
+    },
+    {
+     "id": "q_care_taxi",
+     "text": "介護タクシーに事前登録していますか?",
+     "type": "yn_unknown"
+    },
+    {
+     "id": "q_short_stay",
+     "text": "ショートステイの利用経験、または候補の当てはありますか?",
+     "type": "yn_unknown"
+    }
+   ]
+  },
+  {
+   "block_id": "b5_worry",
+   "title": "いま気がかりなこと",
+   "questions": [
+    {
+     "id": "q_worries",
+     "text": "いま、気がかりなことはどれですか(いくつでも)",
+     "type": "worry_multi",
+     "optional": true,
+     "hint": "選ぶと、あなたの備えプランの並び順に反映します。当てはまらなければ選ばなくて構いません。",
+     "options": [
+      {
+       "value": "w_no_answer",
+       "label": "電話に出ないことがあり、そのたびに不安になる(見に行くこともある)"
+      },
+      {
+       "value": "w_memory",
+       "label": "物忘れや、同じ話をすることが増えてきた"
+      },
+      {
+       "value": "w_fall",
+       "label": "転倒が怖い(ふらついている・転んだことがある)"
+      },
+      {
+       "value": "w_emergency_flow",
+       "label": "急に体調を崩したとき、自分がどう動けばいいか分からない"
+      },
+      {
+       "value": "w_self_down",
+       "label": "自分が倒れたら、親はどうなるのか"
+      },
+      {
+       "value": "w_money",
+       "label": "介護にお金がどのくらいかかるのか分からない"
+      },
+      {
+       "value": "w_work",
+       "label": "仕事と両立できるか不安(休みや早退が増えている)"
+      }
+     ]
+    }
+   ]
+  }
+ ]
 }
