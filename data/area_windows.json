@@ -1,0 +1,57 @@
+{
+ "schema": "area-windows/v1",
+ "category_order": [
+  "chiiki_houkatsu",
+  "koureifukushi_ka",
+  "kinkyu_tsuho",
+  "haishoku_mimamori",
+  "shougaisha_kojo",
+  "kazoku_kaigo"
+ ],
+ "areas": {
+  "山形県|山形市": {
+   "code": "06201",
+   "checked_at": "2026-07-23",
+   "items": {
+    "chiiki_houkatsu": "https://www.city.yamagata-yamagata.lg.jp/kenkofukushi/koureisha/1006644/1005010.html",
+    "koureifukushi_ka": "https://www.city.yamagata-yamagata.lg.jp/shiseijoho/soshiki/1006956/1006963/1006313.html",
+    "kinkyu_tsuho": "https://www.city.yamagata-yamagata.lg.jp/kenkofukushi/koureisha/1007266/1005064.html",
+    "haishoku_mimamori": "https://www.city.yamagata-yamagata.lg.jp/kenkofukushi/koureisha/1007201/1009819.html",
+    "shougaisha_kojo": "https://www.city.yamagata-yamagata.lg.jp/kenkofukushi/kaigo/1006646/1002248.html",
+    "kazoku_kaigo": "https://www.city.yamagata-yamagata.lg.jp/kenkofukushi/koureisha/1007266/1005030.html"
+   }
+  },
+  "山形県|鶴岡市": {
+   "code": "06203",
+   "checked_at": "2026-07-23",
+   "items": {
+    "chiiki_houkatsu": "https://www.city.tsuruoka.lg.jp/kenko/kaigo/houkatusennta-.html",
+    "koureifukushi_ka": "https://www.city.tsuruoka.lg.jp/shisei/shiyakusyo/soshiki/kenkoufukusibu/tyouzyu.html",
+    "haishoku_mimamori": "https://www.city.tsuruoka.lg.jp/kenko/kaigo/shien/annsinnmimamori0804.html",
+    "shougaisha_kojo": "https://www.city.tsuruoka.lg.jp/kenko/kaigo/oshirase/other/kaigo05.html",
+    "kazoku_kaigo": "https://www.city.tsuruoka.lg.jp/kenko/kaigo/shien/iroukinn080401.html"
+   }
+  },
+  "山形県|酒田市": {
+   "code": "06204",
+   "checked_at": "2026-07-23",
+   "items": {
+    "chiiki_houkatsu": "https://www.city.sakata.lg.jp/kenko/kaigohoken/chiikihoukatsu/kaigokenikitougou.html",
+    "koureifukushi_ka": "https://www.city.sakata.lg.jp/kenko/kourei/index.html",
+    "kinkyu_tsuho": "https://www.city.sakata.lg.jp/kenko/kourei/koureisyafukushi/kaigozaitaku2023.html",
+    "haishoku_mimamori": "https://www.city.sakata.lg.jp/kenko/kourei/koureisyafukushi/kaigozaitaku2023.html",
+    "shougaisha_kojo": "https://www.city.sakata.lg.jp/kenko/kaigohoken/kaigohoken/kaigo022026022015321.html",
+    "kazoku_kaigo": "https://www.city.sakata.lg.jp/kenko/kourei/koureisyafukushi/katei-kaigo.html"
+   }
+  },
+  "埼玉県|川口市": {
+   "code": "11203",
+   "checked_at": "2026-07-13",
+   "items": {
+    "chiiki_houkatsu": "https://www.city.kawaguchi.lg.jp/soshiki/01070/040/chiikihoukatsu/30775.html",
+    "kinkyu_tsuho": "https://www.city.kawaguchi.lg.jp/soshiki/01070/040/4/3909.html",
+    "haishoku_mimamori": "https://chiiki-kaigo.casio.jp/kawaguchi"
+   }
+  }
+ }
+}

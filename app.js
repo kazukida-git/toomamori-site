@@ -31,7 +31,7 @@
     questions: [],
     index: 0,
     answers: {},
-    data: { questions: null, rules: null, catalog: null, scenes: null, areas: null, mirror: null, faq: null, glossary: null, municipalities: null },
+    data: { questions: null, rules: null, catalog: null, scenes: null, areas: null, mirror: null, faq: null, glossary: null, municipalities: null, areaWindows: null },
     statuses: {},
     flags: {},
     mirror: null,
@@ -328,12 +328,52 @@
       '&body=' + encodeURIComponent(name);
   }
 
+  var WINDOW_ITEMS = [
+    { key: 'chiiki_houkatsu', label: '介護の相談窓口(地域包括支援センター)' },
+    { key: 'koureifukushi_ka', label: '高齢福祉の担当課' },
+    { key: 'kinkyu_tsuho', label: '緊急通報のしくみ' },
+    { key: 'haishoku_mimamori', label: '配食・見守り' },
+    { key: 'shougaisha_kojo', label: '障害者控除対象者認定書(税の軽減)' },
+    { key: 'kazoku_kaigo', label: '介護するご家族への支援' }
+  ];
+
+  function areaWindowFor(pref, muni) {
+    var w = state.data.areaWindows;
+    if (!w || !w.areas || !pref || !muni) return null;
+    return w.areas[pref + '|' + muni] || null;
+  }
+
+  function checkedMonthLabel(iso) {
+    var m = String(iso == null ? '' : iso).match(/^(\d{4})-(\d{2})/);
+    if (!m) return '';
+    return '(' + m[1] + '年' + parseInt(m[2], 10) + '月確認)';
+  }
+
+  function renderWindowList(muni, win) {
+    var html = '';
+    html += '<p class="area-win-h">' + esc(muni) + 'の窓口</p>';
+    html += '<p>いまご案内できるのは、市の公式ページへの入口までです。費用や対象になる条件は市によって異なりますので、くわしくはリンク先か、お電話で直接お確かめください。</p>';
+    html += '<ul class="area-links area-win-list">';
+    WINDOW_ITEMS.forEach(function (it) {
+      var url = win.items && win.items[it.key];
+      if (!url) return;
+      html += '<li>' + esc(it.label) + ' → <a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">公式ページを見る</a></li>';
+    });
+    html += '</ul>';
+    html += '<p>ここに出ていないことは、高齢福祉の担当課におたずねになるのが近道です。</p>';
+    html += '<p class="area-win-date">' + checkedMonthLabel(win.checked_at) + '</p>';
+    html += '<p>この地域の情報をもっとくわしくしてほしい、というご要望は<a id="area-request-win" class="area-request-link" href="' + esc(requestUrl(state.areaPref, muni)) + '" target="_blank" rel="noopener noreferrer">こちら</a>からお寄せください。</p>';
+    return html;
+  }
+
   function renderAreaNotice() {
     var box = $('area-notice');
     if (!box) return;
     if (!state.areaMuni) { box.classList.add('hidden'); box.innerHTML = ''; return; }
     box.classList.remove('hidden');
     var muni = state.areaMuni;
+    var win = areaWindowFor(state.areaPref, muni);
+    if (win) { box.innerHTML = renderWindowList(muni, win); return; }
     var supported = state.areaId !== 'national';
     if (supported) {
       box.innerHTML = '<p class="area-ready">' + esc(muni) + 'の窓口情報をご案内できます。</p>';
@@ -1900,7 +1940,8 @@
       fetchJSON('data/card_faq_v3.json'),
       fetchJSON('data/glossary.json'),
       fetchJSON('data/mame.json'),
-      fetchJSON('data/municipalities.json')
+      fetchJSON('data/municipalities.json'),
+      fetchJSON('data/area_windows.json').catch(function () { return null; })
     ]).then(function (res) {
       state.data.questions = res[0];
       state.data.rules = res[1];
@@ -1912,6 +1953,7 @@
       state.data.glossary = res[7];
       state.data.mame = res[8];
       state.data.municipalities = res[9];
+      state.data.areaWindows = res[10];
       bindTopControls();
     }).catch(function (err) {
       if (window.console && console.error) console.error(err);

@@ -208,6 +208,11 @@ main.wrap { padding-top: 20px; padding-bottom: 24px; }
 .area-links { margin: 8px 0; padding-left: 1.3em; }
 .area-links li { margin-bottom: 6px; }
 .area-notice a { color: var(--color-kaki-text); font-weight: 700; }
+/* 地域の窓口一覧(表示3段階の中段)。既存 area-notice の囲みをそのまま使う。 */
+.area-notice .area-win-h { font-weight: 700; color: var(--color-ink); font-size: 17px; margin: 0 0 8px; }
+.area-win-list { margin: 8px 0; }
+.area-win-list li { margin-bottom: 8px; }
+.area-notice .area-win-date { font-size: 13px; color: var(--color-ink-soft); }
 /* 「下のボタンから追加をリクエストできます」の“ボタン”。遷移先が mailto/フォームURLなので a で実装 */
 .area-request {
   display: inline-flex; align-items: center; justify-content: center;
