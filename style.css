@@ -485,6 +485,12 @@ a:focus-visible {
 .howto p { margin: 0 0 10px; }
 .howto p:last-child { margin-bottom: 0; }
 
+/* ロードマップ「これから、増やしていく予定のもの」。既存 lp-block に準じる。
+   免責の前に来るため控えめすぎない体裁: 項目名(strong)は太字の小見出し程度に。 */
+.roadmap p { margin: 0 0 12px; }
+.roadmap p:last-child { margin-bottom: 0; }
+.roadmap p strong { font-size: 18px; color: var(--color-ink); }
+
 /* 価格の予定表記(仕様4.3 §3) */
 .pricing-note {
   font-size: 16px; color: var(--color-ink-soft);
