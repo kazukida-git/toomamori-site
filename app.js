@@ -354,9 +354,12 @@
     html += '<p class="area-win-h">' + esc(muni) + 'の窓口</p>';
     html += '<p>いまご案内できるのは、市の公式ページへの入口までです。費用や対象になる条件は市によって異なりますので、くわしくはリンク先か、お電話で直接お確かめください。</p>';
     html += '<ul class="area-links area-win-list">';
+    var seenUrls = {};
     WINDOW_ITEMS.forEach(function (it) {
       var url = win.items && win.items[it.key];
       if (!url) return;
+      if (seenUrls[url]) return;
+      seenUrls[url] = true;
       html += '<li>' + esc(it.label) + ' → <a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">公式ページを見る</a></li>';
     });
     html += '</ul>';
