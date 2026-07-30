@@ -171,6 +171,11 @@
         return a.emergency_consult && (a.emergency_consult.ai_kyukyu || a.emergency_consult.q_jyosuke);
       },
       display: function (o) { return o.name; }
+    },
+    sharp7119: {
+      label: '救急電話相談(#7119)',
+      get: function (a) { return a.emergency_consult && a.emergency_consult.sharp7119; },
+      display: function (o) { return o.available === 'yes' ? (o.phone || '#7119') : ''; }
     }
   };
 
@@ -487,6 +492,51 @@
       return r.text == null ? '' : r.text;
     });
     return { text: out, used: used };
+  }
+
+  function resolveSharp7119(chain) {
+    for (var i = 0; i < chain.length; i++) {
+      var ec = chain[i].emergency_consult;
+      if (ec && ec.sharp7119) {
+        var o = ec.sharp7119;
+        return {
+          available: o.available || 'unknown',
+          phone: o.phone || null,
+          hours: o.hours || null,
+          alt_phone: o.alt_phone || null,
+          alt_phone_note: o.alt_phone_note || null,
+          note: o.note || null,
+          source_url: o.source_url || null,
+          last_checked: o.last_checked || null,
+          areaName: chain[i].display_name
+        };
+      }
+    }
+    return { available: 'unknown', phone: null, hours: null, alt_phone: null, alt_phone_note: null, note: null, source_url: null, last_checked: null, areaName: null };
+  }
+
+  function sharp7119Tel(chain) {
+    var v = resolveSharp7119(chain);
+    if (v.available !== 'yes') return '';
+    var dial = String(v.phone || '#7119').replace(/[^0-9#+]/g, '');
+    return dial ? '<a class="chip-tel" href="tel:' + esc(dial) + '">発信</a>' : '';
+  }
+
+  function sharp7119CardBlock(chain) {
+    var v = resolveSharp7119(chain);
+    var inner = '';
+    if (v.available === 'yes') {
+      inner += '<p class="s7-line"><strong>' + esc(v.phone || '#7119') + '</strong>' + (v.hours ? '（受付時間: ' + esc(v.hours) + '）' : '') + '</p>';
+      if (v.alt_phone) inner += '<p class="s7-alt">#が使えない回線用: <strong>' + esc(v.alt_phone) + '</strong>' + (v.alt_phone_note ? '（' + esc(v.alt_phone_note) + '）' : '') + '</p>';
+    } else if (v.available === 'partial') {
+      inner += '<p class="s7-line">お住まいの地域が対象か、県のページでご確認ください</p>';
+      if (v.source_url) inner += '<p class="s7-link"><a href="' + esc(v.source_url) + '" target="_blank" rel="noopener noreferrer">県のページを見る</a></p>';
+    } else if (v.available === 'no') {
+      inner = '';
+    } else {
+      if (v.note) inner += '<p class="s7-note">' + esc(v.note) + '</p>';
+    }
+    return inner ? '<div class="sharp7119-state">' + inner + '</div>' : '';
   }
 
   function checkedNote(used) {
@@ -944,6 +994,7 @@
 
   function unpreparedBody(card, chain) {
     var html = '';
+    if (card.card_id === 'sharp7119') html += sharp7119CardBlock(chain);
     if (card.target) html += '<p class="card-target">対象: ' + rich(card.target) + '</p>';
     html += section('起こり得ること', card.risk, chain);
     html += section(card.whatis_label || 'これは何か', card.whatis, chain);
@@ -1317,7 +1368,7 @@
     if (!state.diagnosed) {
       var t0 = '';
       if (id === 'call_119') t0 = '<a class="chip-tel" href="tel:119">発信</a>';
-      else if (id === 'sharp7119') t0 = '<a class="chip-tel" href="tel:#7119">発信</a>';
+      else if (id === 'sharp7119') { if (resolveSharp7119(chain).available === 'no') return ''; t0 = sharp7119Tel(chain); }
       return '<span class="chip chip-info">' + esc(card.name) + t0 + '</span>';
     }
     var st = state.statuses[id];
@@ -1328,7 +1379,7 @@
     var suffix = '';
     var tel = '';
     if (id === 'call_119') { cls += ' chip-info'; tel = '<a class="chip-tel" href="tel:119">発信</a>'; }
-    else if (id === 'sharp7119') { cls += ' chip-info'; tel = '<a class="chip-tel" href="tel:#7119">発信</a>'; }
+    else if (id === 'sharp7119') { if (resolveSharp7119(chain).available === 'no') return ''; cls += ' chip-info'; tel = sharp7119Tel(chain); }
     else if (res && res.registered) {
       cls += ' chip-avail';
       if (res.name) label += '<span class="chip-name">' + esc((res.prefix || '') + res.name) + '</span>';
@@ -1362,7 +1413,8 @@
     prep.forEach(function (c) { L.push('・' + c.name + (c.recommendation ? ' … ' + firstLine(substitute(c.recommendation, chain).text) : '')); });
     L.push('');
     L.push('■ 連絡先・場所(分かる範囲で追記してください)');
-    L.push('・救急: 119 / 救急電話相談: #7119');
+    var s7yes = resolveSharp7119(chain).available === 'yes';
+    L.push(s7yes ? '・救急: 119 / 救急電話相談: #7119' : '・救急: 119');
     var houkatsu = resolvePlaceholder(chain, 'chiiki_houkatsu');
     if (houkatsu) L.push('・地域包括支援センター: ' + houkatsu.text);
     L.push('・ケアマネジャー: (連絡先を記入)');
@@ -1371,7 +1423,7 @@
     L.push('・保険証・お薬手帳・介護保険証の場所: (記入)');
     L.push('・駆けつけ役(誰が・何分で): (記入)');
     L.push('');
-    L.push('※命に関わる症状・判断に迷うときは、ためらわず 119 / #7119 / かかりつけ医へ。');
+    L.push(s7yes ? '※命に関わる症状・判断に迷うときは、ためらわず 119 / #7119 / かかりつけ医へ。' : '※命に関わる症状・判断に迷うときは、ためらわず 119 / かかりつけ医へ。');
     L.push('※このメモは家族で共有してください。');
     return L.join('\n');
   }

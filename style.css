@@ -207,6 +207,15 @@ main.wrap { padding-top: 20px; padding-bottom: 24px; }
 .area-notice .area-ready { font-weight: 700; color: var(--color-ink); }
 .area-links { margin: 8px 0; padding-left: 1.3em; }
 .area-links li { margin-bottom: 6px; }
+/* #7119 の地域状態ブロック(カード先頭)。番号/受付時間・確認案内・note を控えめな囲みで。 */
+.sharp7119-state {
+  background: var(--color-soft); border-left: 4px solid var(--color-kaki);
+  border-radius: 6px; padding: 8px 12px; margin: 0 0 10px; font-size: 15px; line-height: 1.6;
+}
+.sharp7119-state p { margin: 0 0 4px; }
+.sharp7119-state p:last-child { margin-bottom: 0; }
+.sharp7119-state .s7-alt, .sharp7119-state .s7-note { font-size: 13px; color: var(--color-ink-soft); }
+.sharp7119-state a { color: var(--color-kaki-text); font-weight: 700; }
 .area-notice a { color: var(--color-kaki-text); font-weight: 700; }
 /* 地域の窓口一覧(表示3段階の中段)。既存 area-notice の囲みをそのまま使う。 */
 .area-notice .area-win-h { font-weight: 700; color: var(--color-ink); font-size: 17px; margin: 0 0 8px; }
