@@ -1,0 +1,17 @@
+{
+ "schema": "pref-windows/v1",
+ "prefs": {
+  "11": {
+   "name": "埼玉県",
+   "checked_at": "2026-07-30",
+   "sharp7119": {
+    "available": "yes",
+    "phone": "#7119",
+    "hours": "24時間365日",
+    "alt_phone": "048-824-4199",
+    "alt_phone_note": "ダイヤル回線・IP電話・PHS・都県境の地域の場合",
+    "source_url": "https://www.pref.saitama.lg.jp/a0703/20151214.html"
+   }
+  }
+ }
+}

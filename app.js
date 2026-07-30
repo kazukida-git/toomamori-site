@@ -24,6 +24,19 @@
     REQUEST_MAIL_TO: ''
   };
 
+  var PREF_CODE = {
+    '北海道': '01', '青森県': '02', '岩手県': '03', '宮城県': '04', '秋田県': '05',
+    '山形県': '06', '福島県': '07', '茨城県': '08', '栃木県': '09', '群馬県': '10',
+    '埼玉県': '11', '千葉県': '12', '東京都': '13', '神奈川県': '14', '新潟県': '15',
+    '富山県': '16', '石川県': '17', '福井県': '18', '山梨県': '19', '長野県': '20',
+    '岐阜県': '21', '静岡県': '22', '愛知県': '23', '三重県': '24', '滋賀県': '25',
+    '京都府': '26', '大阪府': '27', '兵庫県': '28', '奈良県': '29', '和歌山県': '30',
+    '鳥取県': '31', '島根県': '32', '岡山県': '33', '広島県': '34', '山口県': '35',
+    '徳島県': '36', '香川県': '37', '愛媛県': '38', '高知県': '39', '福岡県': '40',
+    '佐賀県': '41', '長崎県': '42', '熊本県': '43', '大分県': '44', '宮崎県': '45',
+    '鹿児島県': '46', '沖縄県': '47'
+  };
+
   var state = {
     areaId: 'national',
     areaPref: '',
@@ -31,7 +44,7 @@
     questions: [],
     index: 0,
     answers: {},
-    data: { questions: null, rules: null, catalog: null, scenes: null, areas: null, mirror: null, faq: null, glossary: null, municipalities: null, areaWindows: null },
+    data: { questions: null, rules: null, catalog: null, scenes: null, areas: null, mirror: null, faq: null, glossary: null, municipalities: null, areaWindows: null, prefWindows: null },
     statuses: {},
     flags: {},
     mirror: null,
@@ -494,25 +507,36 @@
     return { text: out, used: used };
   }
 
-  function resolveSharp7119(chain) {
+  function nationalSharp7119Note(chain) {
     for (var i = 0; i < chain.length; i++) {
       var ec = chain[i].emergency_consult;
-      if (ec && ec.sharp7119) {
-        var o = ec.sharp7119;
-        return {
-          available: o.available || 'unknown',
-          phone: o.phone || null,
-          hours: o.hours || null,
-          alt_phone: o.alt_phone || null,
-          alt_phone_note: o.alt_phone_note || null,
-          note: o.note || null,
-          source_url: o.source_url || null,
-          last_checked: o.last_checked || null,
-          areaName: chain[i].display_name
-        };
-      }
+      if (ec && ec.sharp7119 && ec.sharp7119.note) return ec.sharp7119.note;
     }
-    return { available: 'unknown', phone: null, hours: null, alt_phone: null, alt_phone_note: null, note: null, source_url: null, last_checked: null, areaName: null };
+    return null;
+  }
+
+  function resolveSharp7119(chain) {
+    var code = PREF_CODE[state.areaPref] || null;
+    var prefs = state.data.prefWindows && state.data.prefWindows.prefs;
+    var p = code && prefs ? prefs[code] : null;
+    var s7 = p && p.sharp7119;
+    if (s7 && s7.available && s7.available !== 'unknown') {
+      return {
+        available: s7.available,
+        phone: s7.phone || null,
+        hours: s7.hours || null,
+        alt_phone: s7.alt_phone || null,
+        alt_phone_note: s7.alt_phone_note || null,
+        note: null,
+        source_url: s7.source_url || null,
+        last_checked: p.checked_at || null,
+        areaName: p.name || state.areaPref || null
+      };
+    }
+    return {
+      available: 'unknown', phone: null, hours: null, alt_phone: null, alt_phone_note: null,
+      note: nationalSharp7119Note(chain), source_url: null, last_checked: null, areaName: null
+    };
   }
 
   function sharp7119Tel(chain) {
@@ -1996,7 +2020,8 @@
       fetchJSON('data/glossary.json'),
       fetchJSON('data/mame.json'),
       fetchJSON('data/municipalities.json'),
-      fetchJSON('data/area_windows.json').catch(function () { return null; })
+      fetchJSON('data/area_windows.json').catch(function () { return null; }),
+      fetchJSON('data/pref_windows.json').catch(function () { return null; })
     ]).then(function (res) {
       state.data.questions = res[0];
       state.data.rules = res[1];
@@ -2009,6 +2034,7 @@
       state.data.mame = res[8];
       state.data.municipalities = res[9];
       state.data.areaWindows = res[10];
+      state.data.prefWindows = res[11];
       bindTopControls();
     }).catch(function (err) {
       if (window.console && console.error) console.error(err);
