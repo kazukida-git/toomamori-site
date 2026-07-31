@@ -420,9 +420,22 @@
       if (p.name === pref) list = p.municipalities;
     });
     var html = '<option value="">市区町村を選ぶ</option>';
-    list.forEach(function (m) { html += '<option value="' + esc(m) + '">' + esc(m) + '</option>'; });
+    list.forEach(function (m) { html += '<option value="' + esc(m.name) + '">' + esc(m.name) + '</option>'; });
     sel.innerHTML = html;
     sel.disabled = !list.length;
+  }
+
+  function muniCode(pref, muni) {
+    if (!pref || !muni) return null;
+    var prefs = (state.data.municipalities && state.data.municipalities.prefectures) || [];
+    for (var i = 0; i < prefs.length; i++) {
+      if (prefs[i].name !== pref) continue;
+      var list = prefs[i].municipalities || [];
+      for (var j = 0; j < list.length; j++) {
+        if (list[j].name === muni) return list[j].code || null;
+      }
+    }
+    return null;
   }
 
   function bindAreaSelects() {
@@ -533,16 +546,27 @@
     var p = code && prefs ? prefs[code] : null;
     var s7 = p && p.sharp7119;
     if (s7 && s7.available && s7.available !== 'unknown') {
+      var src = s7, subName = null;
+      if (Array.isArray(s7.subdivisions) && s7.subdivisions.length) {
+        var mc = parseInt(muniCode(state.areaPref, state.areaMuni), 10);
+        if (mc) {
+          for (var i = 0; i < s7.subdivisions.length; i++) {
+            var sd = s7.subdivisions[i];
+            var hit = (sd.ranges || []).some(function (r) { return mc >= r[0] && mc <= r[1]; });
+            if (hit) { src = sd; subName = sd.name; break; }
+          }
+        }
+      }
       return {
-        available: s7.available,
-        phone: s7.phone || null,
-        hours: s7.hours || null,
-        alt_phone: s7.alt_phone || null,
-        alt_phone_note: s7.alt_phone_note || null,
+        available: src.available,
+        phone: src.phone || null,
+        hours: src.hours || null,
+        alt_phone: src.alt_phone || null,
+        alt_phone_note: src.alt_phone_note || null,
         note: null,
-        source_url: s7.source_url || null,
+        source_url: src.source_url || null,
         last_checked: p.checked_at || null,
-        areaName: p.name || state.areaPref || null
+        areaName: subName || p.name || state.areaPref || null
       };
     }
     return {

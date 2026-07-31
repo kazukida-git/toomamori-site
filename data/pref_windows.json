@@ -22,7 +22,51 @@
     "hours": "24時間年中無休",
     "alt_phone": "03-3212-2323",
     "alt_phone_note": null,
-    "source_url": "https://www.tfd.metro.tokyo.lg.jp/lfe/kyuu_adv/soudan-center.html"
+    "source_url": "https://www.tfd.metro.tokyo.lg.jp/lfe/kyuu_adv/soudan-center.html",
+    "subdivisions": [
+     {
+      "name": "区部(特別区)",
+      "ranges": [
+       [
+        13101,
+        13123
+       ]
+      ],
+      "available": "yes",
+      "phone": "#7119",
+      "hours": "24時間年中無休",
+      "alt_phone": "03-3212-2323",
+      "source_url": "https://www.tfd.metro.tokyo.lg.jp/lfe/kyuu_adv/soudan-center.html"
+     },
+     {
+      "name": "多摩(市部・郡部)",
+      "ranges": [
+       [
+        13201,
+        13308
+       ]
+      ],
+      "available": "yes",
+      "phone": "#7119",
+      "hours": "24時間年中無休",
+      "alt_phone": "042-521-2323",
+      "source_url": "https://www.tfd.metro.tokyo.lg.jp/lfe/kyuu_adv/soudan-center.html"
+     },
+     {
+      "name": "島しょ",
+      "ranges": [
+       [
+        13361,
+        13421
+       ]
+      ],
+      "available": "partial",
+      "phone": "#7119",
+      "hours": null,
+      "alt_phone": null,
+      "source_url": "https://www.tfd.metro.tokyo.lg.jp/lfe/kyuu_adv/soudan-center.html"
+     }
+    ]
    }
   },
   "06": {
