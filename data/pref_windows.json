@@ -12,6 +12,30 @@
     "alt_phone_note": "ダイヤル回線・IP電話・PHS・都県境の地域の場合",
     "source_url": "https://www.pref.saitama.lg.jp/a0703/20151214.html"
    }
+  },
+  "13": {
+   "name": "東京都",
+   "checked_at": "2026-07-31",
+   "sharp7119": {
+    "available": "partial",
+    "phone": "#7119",
+    "hours": "24時間年中無休",
+    "alt_phone": "03-3212-2323",
+    "alt_phone_note": null,
+    "source_url": "https://www.tfd.metro.tokyo.lg.jp/lfe/kyuu_adv/soudan-center.html"
+   }
+  },
+  "06": {
+   "name": "山形県",
+   "checked_at": "2026-07-31",
+   "sharp7119": {
+    "available": "yes",
+    "phone": "#7119",
+    "hours": "毎日 午後6時〜翌朝8時",
+    "alt_phone": "023-633-0799",
+    "alt_phone_note": null,
+    "source_url": "https://www.pref.yamagata.jp/090013/bosai/shobo/kyuukyuu/99tel.html"
+   }
   }
  }
 }

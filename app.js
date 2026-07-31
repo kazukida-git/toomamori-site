@@ -558,6 +558,13 @@
     return dial ? '<a class="chip-tel" href="tel:' + esc(dial) + '">発信</a>' : '';
   }
 
+  var SHARP7119_NO_BLOCK = [
+    '急な病気やけがで「救急車を呼んだほうがいいのか」と迷ったときに、相談できる電話窓口です。看護師などが受けて、受診の目安を教えてくれます。',
+    'ただし、全国どこでも使えるわけではありません。実施しているかどうかは都道府県や市町村によって違い、行っていない地域があります。',
+    '調べたところ、お住まいの地域では見当たりませんでした。お住まいの市町村が独自に行っている場合もあるので、気になるときは市の窓口でお尋ねください。',
+    '迷ったときは、Q助(全国どこでも使えるアプリ)か、かかりつけのお医者さんにご相談ください。命に関わりそうなときは、ためらわず119番へ。'
+  ];
+
   function sharp7119CardBlock(chain) {
     var v = resolveSharp7119(chain);
     var inner = '';
@@ -568,7 +575,7 @@
       inner += '<p class="s7-line">お住まいの地域が対象か、県のページでご確認ください</p>';
       if (v.source_url) inner += '<p class="s7-link"><a href="' + esc(v.source_url) + '" target="_blank" rel="noopener noreferrer">県のページを見る</a></p>';
     } else if (v.available === 'no') {
-      inner = '';
+      inner = SHARP7119_NO_BLOCK.map(function (p) { return '<p class="s7-no">' + esc(p) + '</p>'; }).join('');
     } else {
       if (v.note) inner += '<p class="s7-note">' + esc(v.note) + '</p>';
     }
