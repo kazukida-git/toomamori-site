@@ -452,9 +452,15 @@
 
   function renderAreaNotice() {
     var box = $('area-notice');
+    var bridge = $('bridge-b');
     if (!box) return;
-    if (!state.areaMuni) { box.classList.add('hidden'); box.innerHTML = ''; return; }
+    if (!state.areaMuni) {
+      box.classList.add('hidden'); box.innerHTML = '';
+      if (bridge) bridge.classList.add('hidden');
+      return;
+    }
     box.classList.remove('hidden');
+    if (bridge) bridge.classList.remove('hidden');
     var muni = state.areaMuni;
     var html;
     var win = areaWindowFor(state.areaPref, muni);

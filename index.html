@@ -107,6 +107,13 @@
         <p class="privacy-aside">(地域の追加リクエストなど、ご自身でフォームに書いてお送りいただくものは除きます)</p>
       </div>
 
+      <!-- (A) 地域選択の直前・常に表示(承認済み文言・一字一句変更禁止) -->
+      <div class="bridge-a">
+        <h3 class="lp-h3">5分で、わが家の備えを見てみませんか</h3>
+        <p>まず、親御さんがお住まいの市区町村を教えてください。その地域の窓口をご案内します。</p>
+        <p>そのあといくつかの質問にお答えいただくと、<strong>あなたのご家庭で「いま使えるもの」と「まだ準備できていないもの」</strong>が分かります。</p>
+      </div>
+
       <div class="field">
         <label class="field-label" for="area-pref">お住まいの地域(親御さんの地域)を選んでください</label>
         <p class="area-reason" id="area-reason">お住まいの市の窓口・制度をご案内するためにうかがいます。</p>
@@ -124,6 +131,12 @@
       <div id="resume-box" class="resume-box hidden">
         <button type="button" id="btn-resume" class="btn btn-secondary">前回の手札一覧を見る</button>
         <button type="button" id="btn-emergency-top" class="btn btn-secondary">いざという時のガイドを見る</button>
+      </div>
+
+      <!-- (B) CTAの直前・地域選択時のみ表示(承認済み文言・一字一句変更禁止。○○さんは文言の一部でプレースホルダーではない) -->
+      <div id="bridge-b" class="bridge-b hidden">
+        <p>ここまでは、どなたにも同じご案内です。</p>
+        <p>質問にお答えいただくと、ここから先が変わります。あなたのご家庭に合わせて、費用の目安や、電話で話す台本つきで並びます。頼れる方のお名前を書き留めておけば、いざという時には「まず○○さんに電話」と、その方のお名前で手順が出ます。</p>
       </div>
 
       <div class="cta-group">

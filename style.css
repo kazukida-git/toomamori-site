@@ -224,10 +224,7 @@ main.wrap { padding-top: 20px; padding-bottom: 24px; }
 .area-notice .area-win-date { font-size: 13px; color: var(--color-ink-soft); }
 /* 都道府県レイヤーの他7項目(折りたたみの節)。窓口一覧の直下。 */
 .pref-section { margin-top: 14px; border-top: 1px solid var(--color-line, #e3ddd0); padding-top: 10px; }
-.pref-section > summary.pref-section-h { cursor: pointer; font-weight: 700; color: var(--color-ink); list-style: none; padding: 6px 0; }
-.pref-section > summary.pref-section-h::-webkit-details-marker { display: none; }
-.pref-section > summary.pref-section-h::before { content: "▶ "; font-size: 11px; color: var(--color-ink-soft); }
-.pref-section[open] > summary.pref-section-h::before { content: "▼ "; }
+.pref-section > summary.pref-section-h { cursor: pointer; font-weight: 700; color: var(--color-ink); padding: 6px 0; }
 .pref-section-body { padding: 4px 0 2px; }
 .pref-section-intro { color: var(--color-ink-soft); margin: 6px 0 12px; }
 .pref-item { margin: 0 0 16px; padding: 10px 0 0; border-top: 1px dashed var(--color-line, #e3ddd0); }
@@ -237,6 +234,11 @@ main.wrap { padding-top: 20px; padding-bottom: 24px; }
 .pref-item-tel, .pref-item-hours { margin: 2px 0; font-size: 14px; }
 .pref-item-date { font-size: 13px; color: var(--color-ink-soft); margin: 2px 0 0; }
 .pref-item-notfound { margin: 6px 0 0; color: var(--color-ink-soft); }
+/* 地域選択の前後で診断へ橋を架ける2ブロック(A: 常時 / B: 地域選択時のみ) */
+.bridge-a { margin: 20px 0 12px; }
+.bridge-b { margin: 14px 0; }
+.bridge-a p, .bridge-b p { margin: 0 0 10px; }
+.bridge-a p:last-child, .bridge-b p:last-child { margin-bottom: 0; }
 /* 「下のボタンから追加をリクエストできます」の“ボタン”。遷移先が mailto/フォームURLなので a で実装 */
 .area-request {
   display: inline-flex; align-items: center; justify-content: center;
