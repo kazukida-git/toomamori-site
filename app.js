@@ -440,12 +440,24 @@
       state.areaId = 'national';
       renderMuniOptions(pref.value);
       renderAreaNotice();
+      syncAreaToProfile();
     });
     muni.addEventListener('change', function () {
       state.areaMuni = muni.value;
       state.areaId = state.areaMuni ? areaIdFor(state.areaPref, state.areaMuni) : 'national';
       renderAreaNotice();
+      syncAreaToProfile();
     });
+  }
+
+  function syncAreaToProfile() {
+    var p = loadProfile();
+    if (!p) return;
+    p.area_id = state.areaId;
+    p.area_pref = state.areaPref;
+    p.area_muni = state.areaMuni;
+    p.updated_at = todayStr();
+    persist(STORAGE_KEY, JSON.stringify(p));
   }
 
   function restoreAreaSelects() {
@@ -1979,10 +1991,12 @@
     var profile = loadProfile();
     if (profile) {
       $('resume-box').classList.remove('hidden');
-      if (profile.area_id) state.areaId = profile.area_id;
+      state.areaId = profile.area_id || 'national';
+      state.areaPref = profile.area_pref || '';
+      state.areaMuni = profile.area_muni || '';
       restoreAreaSelects();
-      $('btn-resume').addEventListener('click', function () { restoreProfile(profile); renderResult(profile); show('screen-result'); });
-      $('btn-emergency-top').addEventListener('click', function () { restoreProfile(profile); openEmergency(); });
+      $('btn-resume').addEventListener('click', function () { var p = loadProfile() || profile; restoreProfile(p); renderResult(p); show('screen-result'); });
+      $('btn-emergency-top').addEventListener('click', function () { var p = loadProfile() || profile; restoreProfile(p); openEmergency(); });
       openHome();
     }
   }
