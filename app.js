@@ -387,28 +387,92 @@
     return html;
   }
 
+  var PREF_SECTION = {
+    closedLabel: '市に聞いても分からないことがあります(○○県の窓口)',
+    intro: '介護の窓口は市区町村だけではありません。県が担当しているものもあります。市役所に聞いても「それは県です」と言われるだけのことがあるので、先にお伝えしておきます。',
+    notFound: '調べた時点では、○○県では見当たりませんでした。念のため、県の窓口でご確認ください。',
+    items: [
+      { key: 'kaigo_shinsakai', heading: '要介護認定に納得できないとき — ○○県 介護保険審査会',
+        body: '「思ったより軽い判定だった」というとき、市に言っても判定は変わりません。都道府県に置かれた介護保険審査会に審査請求をします。市の窓口では扱っていないので、ここを知らないと諦めることになります。\n期限があるので、納得できないときは早めにお問い合わせください。' },
+      { key: 'kokuho_kujo', heading: 'サービスの内容に困ったとき — ○○県 国民健康保険団体連合会(国保連)',
+        body: 'ヘルパーさんや事業所の対応に困っても、直接は言いにくいものです。国保連が県ごとに苦情の相談を受け付けています。まずはケアマネージャーさんや市の窓口に相談し、それでも解決しないときの行き先です。' },
+      { key: 'kouki_koiki', heading: '75歳以上の医療のこと — ○○後期高齢者医療広域連合',
+        body: '75歳になると、それまでの健康保険から後期高齢者医療制度に移ります。運営しているのは市ではなく、県内の市町村が集まって作った広域連合です。保険料や医療費の上限は、ここが決めています。\n申請の窓口は、お住まいの市の担当課になることが多いです。' },
+      { key: 'parking_permit', heading: '車椅子用の駐車スペースを使いたいとき',
+        body: '商業施設などにある車椅子マークの駐車スペース。県が利用証を発行していて、これがあると駐められます。要介護の高齢者も対象になることがあります。\n県によって名前が違います。' },
+      { key: 'nichijo_jiritsu', heading: 'お金の管理が難しくなってきたとき — 日常生活自立支援事業',
+        body: '通帳の管理や支払いの手続きを手伝ってもらえます。担っているのは社会福祉協議会で、県の社協が実施主体、実際の相談はお住まいの市町村の社協が窓口です。成年後見より軽い段階で使えるのが特徴です。\n県によって愛称があります。' },
+      { key: 'ninchisho_call', heading: '認知症のことを、誰かに相談したいとき — ○○県 認知症コールセンター',
+        body: '診断がついていなくても、ご家族が話を聞いてもらえる電話窓口です。同じ経験をしたご家族が電話を受けていることが多く、制度の説明だけでなく、気持ちの相談もできます。\n受付の曜日や時間が限られていることがあります。' },
+      { key: 'carer_shien', heading: '介護しているあなた自身のこと — ケアラー支援',
+        body: '介護する人(ケアラー)を支えるしくみを、県が持っていることがあります。相談窓口、家族の会の一覧、仕事との両立の情報など。' }
+    ]
+  };
+
+  function subPref(text, pref) {
+    return String(text == null ? '' : text).replace(/○○県/g, pref).replace(/○○/g, pref);
+  }
+
+  function renderPrefSection(pref) {
+    var code = PREF_CODE[pref];
+    var prefs = state.data.prefWindows && state.data.prefWindows.prefs;
+    var p = code && prefs ? prefs[code] : null;
+    if (!p || !p.windows) return '';
+    var S = PREF_SECTION;
+    var html = '<details class="pref-section"><summary class="pref-section-h">' + esc(subPref(S.closedLabel, pref)) + '</summary>';
+    html += '<div class="pref-section-body">';
+    html += '<p class="pref-section-intro">' + esc(S.intro) + '</p>';
+    S.items.forEach(function (item) {
+      var w = p.windows[item.key] || { found: false };
+      html += '<div class="pref-item">';
+      html += '<h4 class="pref-item-h">' + esc(subPref(item.heading, pref)) + '</h4>';
+      subPref(item.body, pref).split('\n').forEach(function (para) {
+        html += '<p class="pref-item-p">' + esc(para) + '</p>';
+      });
+      if (w.found) {
+        if (w.name) {
+          html += '<p class="pref-item-name">' +
+            (w.url ? '<a href="' + esc(w.url) + '" target="_blank" rel="noopener noreferrer">' + esc(w.name) + '</a>' : esc(w.name)) +
+            '</p>';
+        }
+        if (w.tel) {
+          var dial = String(w.tel).replace(/[^0-9#+]/g, '');
+          html += '<p class="pref-item-tel">電話: ' + (dial ? '<a href="tel:' + esc(dial) + '">' + esc(w.tel) + '</a>' : esc(w.tel)) + '</p>';
+        }
+        if (w.hours) html += '<p class="pref-item-hours">受付: ' + esc(w.hours) + '</p>';
+        if (w.checked_at) html += '<p class="pref-item-date">' + esc(checkedMonthLabel(w.checked_at)) + '</p>';
+      } else {
+        html += '<p class="pref-item-notfound">' + esc(subPref(S.notFound, pref)) + '</p>';
+      }
+      html += '</div>';
+    });
+    html += '</div></details>';
+    return html;
+  }
+
   function renderAreaNotice() {
     var box = $('area-notice');
     if (!box) return;
     if (!state.areaMuni) { box.classList.add('hidden'); box.innerHTML = ''; return; }
     box.classList.remove('hidden');
     var muni = state.areaMuni;
+    var html;
     var win = areaWindowFor(state.areaPref, muni);
-    if (win) { box.innerHTML = renderWindowList(muni, win); return; }
-    var supported = state.areaId !== 'national';
-    if (supported) {
-      box.innerHTML = '<p class="area-ready">' + esc(muni) + 'の窓口情報をご案内できます。</p>';
-      return;
+    if (win) {
+      html = renderWindowList(muni, win);
+    } else if (state.areaId !== 'national') {
+      html = '<p class="area-ready">' + esc(muni) + 'の窓口情報をご案内できます。</p>';
+    } else {
+      html = '<p>' + esc(muni) + 'の詳しい窓口情報は、まだ準備中です。<strong>下のボタンから追加をリクエストできます。</strong>' +
+        'いただいたリクエストから数日以内に追加し、次にお越しいただいたときに反映されています。' +
+        'それまでの間も、診断・備えプラン・緊急時ガイドはすべてお使いいただけます</p>';
+      html += '<ul class="area-links">';
+      html += '<li><a href="' + searchUrl(muni + ' 地域包括支援センター') + '" target="_blank" rel="noopener noreferrer">「' + esc(muni) + ' 地域包括支援センター」で検索</a></li>';
+      html += '<li><a href="' + searchUrl(muni + ' 公式サイト') + '" target="_blank" rel="noopener noreferrer">「' + esc(muni) + ' 公式サイト」で検索</a></li>';
+      html += '</ul>';
+      html += '<p><a id="area-request" class="area-request" href="' + esc(requestUrl(state.areaPref, muni)) + '" target="_blank" rel="noopener noreferrer">' + esc(muni) + 'の追加リクエストを送る</a></p>';
     }
-    var html = '';
-    html += '<p>' + esc(muni) + 'の詳しい窓口情報は、まだ準備中です。<strong>下のボタンから追加をリクエストできます。</strong>' +
-      'いただいたリクエストから数日以内に追加し、次にお越しいただいたときに反映されています。' +
-      'それまでの間も、診断・備えプラン・緊急時ガイドはすべてお使いいただけます</p>';
-    html += '<ul class="area-links">';
-    html += '<li><a href="' + searchUrl(muni + ' 地域包括支援センター') + '" target="_blank" rel="noopener noreferrer">「' + esc(muni) + ' 地域包括支援センター」で検索</a></li>';
-    html += '<li><a href="' + searchUrl(muni + ' 公式サイト') + '" target="_blank" rel="noopener noreferrer">「' + esc(muni) + ' 公式サイト」で検索</a></li>';
-    html += '</ul>';
-    html += '<p><a id="area-request" class="area-request" href="' + esc(requestUrl(state.areaPref, muni)) + '" target="_blank" rel="noopener noreferrer">' + esc(muni) + 'の追加リクエストを送る</a></p>';
+    html += renderPrefSection(state.areaPref);
     box.innerHTML = html;
   }
 

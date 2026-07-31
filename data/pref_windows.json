@@ -11,6 +11,52 @@
     "alt_phone": "048-824-4199",
     "alt_phone_note": "ダイヤル回線・IP電話・PHS・都県境の地域の場合",
     "source_url": "https://www.pref.saitama.lg.jp/a0703/20151214.html"
+   },
+   "windows": {
+    "kaigo_shinsakai": {
+     "found": true,
+     "name": "埼玉県介護保険審査会(処分に対する審査請求)",
+     "url": "https://www.pref.saitama.lg.jp/a0609/shikumi/seido06.html",
+     "checked_at": "2026-07-30"
+    },
+    "kokuho_kujo": {
+     "found": true,
+     "name": "介護サービスの苦情申立て(埼玉県国保連)",
+     "url": "https://www.pref.saitama.lg.jp/a0609/riyouhouhou/user09.html",
+     "checked_at": "2026-07-30"
+    },
+    "kouki_koiki": {
+     "found": true,
+     "name": "埼玉県後期高齢者医療広域連合",
+     "url": "https://www.saitama-koukikourei.org/",
+     "checked_at": "2026-07-30"
+    },
+    "parking_permit": {
+     "found": true,
+     "name": "埼玉県思いやり駐車場制度(パーキング・パーミット)",
+     "url": "https://www.pref.saitama.lg.jp/a0601/parking_permit.html",
+     "checked_at": "2026-07-30"
+    },
+    "nichijo_jiritsu": {
+     "found": true,
+     "name": "日常生活自立支援事業 あんしんサポートねっと(埼玉県社協)",
+     "url": "https://www.fukushi-saitama.or.jp/site/office_13.html",
+     "checked_at": "2026-07-30"
+    },
+    "ninchisho_call": {
+     "found": true,
+     "name": "埼玉県認知症電話相談窓口(認知症の人と家族の会 埼玉県支部へ委託)",
+     "url": "https://www.pref.saitama.lg.jp/a0609/ninchisyosesaku/ninchishoudenwasoudan.html",
+     "checked_at": "2026-07-30",
+     "tel": "048-814-1210",
+     "hours": "月・水・金・土 10時-16時(年末年始・祝日休)"
+    },
+    "carer_shien": {
+     "found": true,
+     "name": "埼玉県ケアラー支援条例",
+     "url": "https://www.pref.saitama.lg.jp/a0609/chiikihoukatukea/jourei.html",
+     "checked_at": "2026-07-30"
+    }
    }
   },
   "13": {
@@ -67,6 +113,47 @@
       "source_url": "https://www.tfd.metro.tokyo.lg.jp/lfe/kyuu_adv/soudan-center.html"
      }
     ]
+   },
+   "windows": {
+    "kaigo_shinsakai": {
+     "found": true,
+     "name": "東京都介護保険審査会(審査請求/不服申立て)",
+     "url": "https://www.fukushi.metro.tokyo.lg.jp/kourei/hoken/kaigo_lib/yokyu",
+     "checked_at": "2026-07-31"
+    },
+    "kokuho_kujo": {
+     "found": true,
+     "name": "東京都国民健康保険団体連合会 介護サービス苦情対応業務",
+     "url": "https://www.tokyo-kokuhoren.or.jp/nursing_office/complaints/",
+     "checked_at": "2026-07-31"
+    },
+    "kouki_koiki": {
+     "found": true,
+     "name": "東京都後期高齢者医療広域連合(東京いきいきネット)",
+     "url": "https://www.tokyo-ikiiki.net/",
+     "checked_at": "2026-07-31"
+    },
+    "parking_permit": {
+     "found": false
+    },
+    "nichijo_jiritsu": {
+     "found": true,
+     "name": "東京都社会福祉協議会 地域福祉権利擁護事業(日常生活自立支援事業)",
+     "url": "https://www.tcsw.tvac.or.jp/kenri/",
+     "checked_at": "2026-07-31"
+    },
+    "ninchisho_call": {
+     "found": true,
+     "name": "認知症家族介護者へのピア電話相談(とうきょう認知症ナビ)",
+     "url": "https://www.ninchishounavi.metro.tokyo.lg.jp/soudan/pia/",
+     "checked_at": "2026-07-31"
+    },
+    "carer_shien": {
+     "found": true,
+     "name": "ヤングケアラーのひろば(東京都ヤングケアラー支援ホームページ)",
+     "url": "https://www.young-carer.metro.tokyo.lg.jp/",
+     "checked_at": "2026-07-31"
+    }
    }
   },
   "06": {
@@ -79,6 +166,47 @@
     "alt_phone": "023-633-0799",
     "alt_phone_note": null,
     "source_url": "https://www.pref.yamagata.jp/090013/bosai/shobo/kyuukyuu/99tel.html"
+   },
+   "windows": {
+    "kaigo_shinsakai": {
+     "found": true,
+     "name": "介護保険に関する審査請求について(山形県介護保険審査会)",
+     "url": "https://www.pref.yamagata.jp/090002/kenfuku/koreisha/hoken/sinsakaitop.html",
+     "checked_at": "2026-07-31"
+    },
+    "kokuho_kujo": {
+     "found": true,
+     "name": "介護サービスに関する苦情処理(山形県国民健康保険団体連合会)",
+     "url": "https://www.ymgt-kokuho.org/kaigo/complaint.html",
+     "checked_at": "2026-07-31"
+    },
+    "kouki_koiki": {
+     "found": true,
+     "name": "山形県後期高齢者医療広域連合",
+     "url": "https://www.yamagata-kouiki.jp/",
+     "checked_at": "2026-07-31"
+    },
+    "parking_permit": {
+     "found": true,
+     "name": "山形県身体障がい者等用駐車施設利用証制度(パーキングパーミット)",
+     "url": "https://www.pref.yamagata.jp/090014/kenfuku/shogai/shien/shienservice/shisetsuriyoushou/parking.html",
+     "checked_at": "2026-07-31"
+    },
+    "nichijo_jiritsu": {
+     "found": true,
+     "name": "福祉サービス利用支援センター(日常生活自立支援事業/山形県社会福祉協議会)",
+     "url": "https://www.ymgt-shakyo.org/aboutus-2-1",
+     "checked_at": "2026-07-31"
+    },
+    "ninchisho_call": {
+     "found": true,
+     "name": "認知症相談・交流拠点「さくらんぼカフェ」(認知症電話相談)",
+     "url": "https://www.pref.yamagata.jp/090002/kenfuku/koreisha/ninchi/sakuranbo-cafe.html",
+     "checked_at": "2026-07-31"
+    },
+    "carer_shien": {
+     "found": false
+    }
    }
   }
  }
