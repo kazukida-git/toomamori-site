@@ -222,6 +222,12 @@ main.wrap { padding-top: 20px; padding-bottom: 24px; }
 .area-win-list { margin: 8px 0; }
 .area-win-list li { margin-bottom: 8px; }
 .area-notice .area-win-date { font-size: 13px; color: var(--color-ink-soft); }
+/* 電話確認済みの窓口(項目ごとに詳細+窓口+確認日を統合表示) */
+.area-win-verified { margin: 4px 0 12px; }
+.area-win-verified .area-win-label { font-weight: 700; color: var(--color-ink); }
+.area-win-detail { margin: 4px 0 4px; font-size: 15px; }
+.area-win-contact { margin: 2px 0; font-size: 14px; color: var(--color-ink); }
+.area-win-confirmed { margin: 2px 0 0; font-size: 12px; color: var(--color-ink-soft); }
 /* 都道府県レイヤーの他7項目(折りたたみの節)。窓口一覧の直下。 */
 .pref-section { margin-top: 14px; border-top: 1px solid var(--color-line, #e3ddd0); padding-top: 10px; }
 .pref-section > summary.pref-section-h { cursor: pointer; font-weight: 700; color: var(--color-ink); padding: 6px 0; }

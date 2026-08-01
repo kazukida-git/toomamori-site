@@ -44,7 +44,7 @@
     questions: [],
     index: 0,
     answers: {},
-    data: { questions: null, rules: null, catalog: null, scenes: null, areas: null, mirror: null, faq: null, glossary: null, municipalities: null, areaWindows: null, prefWindows: null },
+    data: { questions: null, rules: null, catalog: null, scenes: null, areas: null, mirror: null, faq: null, glossary: null, municipalities: null, areaWindows: null, prefWindows: null, verifiedWindows: null },
     statuses: {},
     flags: {},
     mirror: null,
@@ -366,13 +366,21 @@
     return w.areas[pref + '|' + muni] || null;
   }
 
+  function verifiedWindowFor(pref, muni) {
+    var w = state.data.verifiedWindows;
+    if (!w || !w.areas || !pref || !muni) return null;
+    return w.areas[pref + '|' + muni] || null;
+  }
+
   function checkedMonthLabel(iso) {
     var m = String(iso == null ? '' : iso).match(/^(\d{4})-(\d{2})/);
     if (!m) return '';
     return '(' + m[1] + '年' + parseInt(m[2], 10) + '月確認)';
   }
 
-  function renderWindowList(muni, win) {
+  function renderWindowList(muni, win, verified) {
+    var vItems = (verified && verified.items) || {};
+    var vLabel = (verified && verified.confirmed_label) || '';
     var html = '';
     html += '<p class="area-win-h">' + esc(muni) + 'の窓口</p>';
     html += '<p>いまご案内できるのは、市の公式ページへの入口までです。費用や対象になる条件は市によって異なりますので、くわしくはリンク先か、お電話で直接お確かめください。</p>';
@@ -380,10 +388,27 @@
     var seenUrls = {};
     WINDOW_ITEMS.forEach(function (it) {
       var url = win.items && win.items[it.key];
-      if (!url) return;
-      if (seenUrls[url]) return;
-      seenUrls[url] = true;
-      html += '<li>' + esc(it.label) + ' → <a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">公式ページを見る</a></li>';
+      var v = vItems[it.key];
+      if (!url && !v) return;
+      if (!v) {
+        if (seenUrls[url]) return;
+        seenUrls[url] = true;
+        html += '<li>' + esc(it.label) + ' → <a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">公式ページを見る</a></li>';
+        return;
+      }
+      html += '<li class="area-win-verified"><span class="area-win-label">' + esc(it.label) + '</span>' +
+        (url ? ' → <a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">公式ページを見る</a>' : '') +
+        '<div class="area-win-detail">' + rich(v.detail) + '</div>' +
+        (v.contact ? '<div class="area-win-contact">' + rich(v.contact) + '</div>' : '') +
+        (vLabel ? '<div class="area-win-confirmed">' + esc(vLabel) + '</div>' : '') +
+        '</li>';
+    });
+    ((verified && verified.extra_items) || []).forEach(function (ex) {
+      html += '<li class="area-win-verified"><span class="area-win-label">' + esc(ex.label) + '</span>' +
+        '<div class="area-win-detail">' + rich(ex.detail) + '</div>' +
+        (ex.contact ? '<div class="area-win-contact">' + rich(ex.contact) + '</div>' : '') +
+        (vLabel ? '<div class="area-win-confirmed">' + esc(vLabel) + '</div>' : '') +
+        '</li>';
     });
     html += '</ul>';
     html += '<p>ここに出ていないことは、高齢福祉の担当課におたずねになるのが近道です。</p>';
@@ -469,8 +494,9 @@
     var muni = state.areaMuni;
     var html;
     var win = areaWindowFor(state.areaPref, muni);
+    var verified = verifiedWindowFor(state.areaPref, muni);
     if (win) {
-      html = renderWindowList(muni, win);
+      html = renderWindowList(muni, win, verified);
     } else if (state.areaId !== 'national') {
       html = '<p class="area-ready">' + esc(muni) + 'の窓口情報をご案内できます。</p>';
     } else {
@@ -1042,7 +1068,7 @@
     return '<div class="script-box">' +
       '<div class="script-label">そのまま言えばOK</div>' +
       '<p class="script-text">' + rich(s.text) + '</p>' +
-      '<button type="button" class="btn btn-copy-script" data-copy="' + esc(s.text) + '">' + icon('copy') + ' コピー</button>' +
+      '<button type="button" class="btn btn-copy-script" data-copy="' + esc(s.text.replace(/\*\*/g, '')) + '">' + icon('copy') + ' コピー</button>' +
       '</div>';
   }
 
@@ -2144,7 +2170,8 @@
       fetchJSON('data/mame.json'),
       fetchJSON('data/municipalities.json'),
       fetchJSON('data/area_windows.json').catch(function () { return null; }),
-      fetchJSON('data/pref_windows.json').catch(function () { return null; })
+      fetchJSON('data/pref_windows.json').catch(function () { return null; }),
+      fetchJSON('data/verified_windows.json').catch(function () { return null; })
     ]).then(function (res) {
       state.data.questions = res[0];
       state.data.rules = res[1];
@@ -2158,6 +2185,7 @@
       state.data.municipalities = res[9];
       state.data.areaWindows = res[10];
       state.data.prefWindows = res[11];
+      state.data.verifiedWindows = res[12];
       bindTopControls();
     }).catch(function (err) {
       if (window.console && console.error) console.error(err);
