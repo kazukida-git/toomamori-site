@@ -141,6 +141,9 @@
     });
   }
 
+  var PLACEHOLDER_FALLBACK = '(この項目は表示できませんでした。お手数ですが、お住まいの市の窓口でお確かめください)';
+  var OPTIONAL_PLACEHOLDERS = { sharp7119: true, chiiki_houkatsu_hours_note: true, touban_i_link: true };
+
   var PLACEHOLDER_DEFS = {
     emergency_call_system: {
       label: '緊急通報システム',
@@ -155,7 +158,7 @@
     chiiki_houkatsu: {
       label: '地域包括支援センター',
       get: function (a) { return a.elderly_consult && a.elderly_consult.chiiki_houkatsu; },
-      display: function (o) { return o.name; }
+      display: function (o) { return o.coordinator ? o.name + '（' + o.coordinator + '）' : o.name; }
     },
     chiiki_houkatsu_hours_note: {
       label: '地域包括支援センターの時間',
@@ -615,6 +618,12 @@
     return null;
   }
 
+  function reportPlaceholderMiss(token, chain, text) {
+    if (typeof console === 'undefined' || !console.error) return;
+    var area = (chain && chain[0] && chain[0].display_name) || state.areaId || '(地域不明)';
+    console.error('[placeholder] 未解決: {' + token + '} / 地域=' + area + ' / 文=「' + String(text).slice(0, 40) + '」');
+  }
+
   function substitute(text, chain, bracketOpts) {
     var used = [];
     var seen = {};
@@ -623,12 +632,17 @@
     var filled = RulesEngine.fillBrackets(text, state.answers, opts);
     var out = String(filled == null ? '' : filled).replace(/\{(\w+)\}/g, function (whole, token) {
       var r = resolvePlaceholder(chain, token);
-      if (!r) return '';
+      var val = r && r.text != null ? String(r.text) : '';
+      if (val === '') {
+        if (OPTIONAL_PLACEHOLDERS[token]) return '';
+        reportPlaceholderMiss(token, chain, text);
+        return PLACEHOLDER_FALLBACK;
+      }
       if (r.last_checked && !seen[token]) {
         seen[token] = true;
         used.push({ label: r.label, last_checked: r.last_checked, areaName: r.areaName });
       }
-      return r.text == null ? '' : r.text;
+      return val;
     });
     return { text: out, used: used };
   }
@@ -641,7 +655,25 @@
     return null;
   }
 
+  function sharp7119Menu(chain) {
+    for (var i = 0; i < chain.length; i++) {
+      var ec = chain[i].emergency_consult;
+      var s7 = ec && ec.sharp7119;
+      if (s7 && (s7.menu || s7.excluded)) return { menu: s7.menu || null, excluded: s7.excluded || null };
+    }
+    var areas = (state.data.areas && state.data.areas.areas) || [];
+    for (var j = 0; j < areas.length; j++) {
+      var a = areas[j];
+      if (a.display_name === state.areaPref && a.emergency_consult && a.emergency_consult.sharp7119) {
+        var ps7 = a.emergency_consult.sharp7119;
+        if (ps7.menu || ps7.excluded) return { menu: ps7.menu || null, excluded: ps7.excluded || null };
+      }
+    }
+    return { menu: null, excluded: null };
+  }
+
   function resolveSharp7119(chain) {
+    var mx = sharp7119Menu(chain);
     var code = PREF_CODE[state.areaPref] || null;
     var prefs = state.data.prefWindows && state.data.prefWindows.prefs;
     var p = code && prefs ? prefs[code] : null;
@@ -664,6 +696,8 @@
         hours: src.hours || null,
         alt_phone: src.alt_phone || null,
         alt_phone_note: src.alt_phone_note || null,
+        menu: mx.menu,
+        excluded: mx.excluded,
         note: null,
         source_url: src.source_url || null,
         last_checked: p.checked_at || null,
@@ -672,6 +706,7 @@
     }
     return {
       available: 'unknown', phone: null, hours: null, alt_phone: null, alt_phone_note: null,
+      menu: mx.menu, excluded: mx.excluded,
       note: nationalSharp7119Note(chain), source_url: null, last_checked: null, areaName: null
     };
   }
@@ -703,6 +738,10 @@
       inner = SHARP7119_NO_BLOCK.map(function (p) { return '<p class="s7-no">' + esc(p) + '</p>'; }).join('');
     } else {
       if (v.note) inner += '<p class="s7-note">' + esc(v.note) + '</p>';
+    }
+    if (v.available === 'yes') {
+      if (v.menu) inner += '<p class="s7-menu">' + esc(v.menu) + '</p>';
+      if (v.excluded) inner += '<p class="s7-excluded">' + esc(v.excluded) + '</p>';
     }
     return inner ? '<div class="sharp7119-state">' + inner + '</div>' : '';
   }
@@ -2203,6 +2242,23 @@
     });
   }
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-  else init();
+  if (typeof document !== 'undefined') {
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  }
+
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+      _state: state,
+      buildChain: buildChain,
+      areaIdFor: areaIdFor,
+      resolvePlaceholder: resolvePlaceholder,
+      substitute: substitute,
+      resolveSharp7119: resolveSharp7119,
+      sharp7119CardBlock: sharp7119CardBlock,
+      PLACEHOLDER_DEFS: PLACEHOLDER_DEFS,
+      OPTIONAL_PLACEHOLDERS: OPTIONAL_PLACEHOLDERS,
+      PLACEHOLDER_FALLBACK: PLACEHOLDER_FALLBACK
+    };
+  }
 })();
