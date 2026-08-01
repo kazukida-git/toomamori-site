@@ -297,6 +297,7 @@
     family_responder: { prefix: '駆けつけ役 ', nameKey: 'responder_name', phoneKey: 'responder_phone' },
     care_taxi: { prefix: '介護タクシー ', nameKey: 'care_taxi_name', phoneKey: 'care_taxi_phone' },
     helper_office: { prefix: 'ヘルパー事業所 ', nameKey: 'helper_name', phoneKey: 'helper_phone' },
+    visiting_nurse: { prefix: '訪問看護 ', nameKey: 'visiting_nurse_name', phoneKey: 'visiting_nurse_phone' },
     family_doctor: { prefix: 'かかりつけ医 ', nameKey: 'doctor_name', phoneKey: 'doctor_phone' },
     key_access: { prefix: '入室手段: ', nameKey: 'key_location', phoneKey: null },
     info_set: { prefix: '情報の保管場所: ', nameKey: 'info_location', phoneKey: null }

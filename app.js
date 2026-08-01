@@ -71,6 +71,10 @@
       { key: 'helper_name', label: '名称' },
       { key: 'helper_phone', label: '電話', tel: true }
     ] },
+    { group: '訪問看護ステーション', fields: [
+      { key: 'visiting_nurse_name', label: '事業所名' },
+      { key: 'visiting_nurse_phone', label: '電話', tel: true }
+    ] },
     { group: 'かかりつけ医', fields: [
       { key: 'doctor_name', label: '医院名' },
       { key: 'doctor_phone', label: '電話', tel: true }
@@ -88,6 +92,7 @@
     '駆けつけ役': 'family_responder',
     '介護タクシー': 'care_taxi',
     'ヘルパー事業所': 'helper_office',
+    '訪問看護ステーション': 'visiting_nurse',
     'かかりつけ医': 'family_doctor',
     '鍵': 'key_access',
     '情報セット': 'info_set'
@@ -1555,6 +1560,9 @@
     var houkatsu = resolvePlaceholder(chain, 'chiiki_houkatsu');
     if (houkatsu) L.push('・地域包括支援センター: ' + houkatsu.text);
     L.push('・ケアマネジャー: (連絡先を記入)');
+    var vn = state.memo || {};
+    var vnParts = [vn.visiting_nurse_name, vn.visiting_nurse_phone].filter(Boolean);
+    L.push(vnParts.length ? '・訪問看護: ' + vnParts.join(' / ') : '・訪問看護: (連絡先を記入)');
     L.push('・かかりつけ医: (連絡先を記入)');
     L.push('・家に入る手段(鍵/キーボックス番号): (記入)');
     L.push('・保険証・お薬手帳・介護保険証の場所: (記入)');

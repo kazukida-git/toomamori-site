@@ -34,6 +34,7 @@
      "instruction": "ヘルパー利用中なら次回訪問の予定を確認、または近隣・親族に「様子を見てもらえるか」を依頼する。あなたが動く前に、近い人の目を先に使う。",
      "cards": [
       "helper_office",
+      "visiting_nurse",
       "family_responder"
      ]
     },
@@ -161,7 +162,8 @@
      "cards": [
       "family_responder",
       "key_access",
-      "helper_office"
+      "helper_office",
+      "visiting_nurse"
      ]
     },
     {
