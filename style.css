@@ -228,6 +228,15 @@ main.wrap { padding-top: 20px; padding-bottom: 24px; }
 .area-win-detail { margin: 4px 0 4px; font-size: 15px; }
 .area-win-contact { margin: 2px 0; font-size: 14px; color: var(--color-ink); }
 .area-win-confirmed { margin: 2px 0 0; font-size: 12px; color: var(--color-ink-soft); }
+/* 市窓口の折りたたみ(県窓口と同じ体裁)。既定は閉じた状態。 */
+.area-win-section { margin: 4px 0 6px; }
+.area-win-section > summary.area-win-summary { cursor: pointer; font-weight: 700; color: var(--color-ink); padding: 6px 0; }
+.area-win-body { padding: 4px 0 2px; }
+/* 調べた内容(費用・条件)を主役にし、公式ページへのリンクは末尾に控えめに置く(太字→標準・余白で分離。文字サイズは変えない)。 */
+.area-win-official { margin: 6px 0 0; }
+.area-win-official a { font-weight: 400; }
+/* 折りたたみ内に増設した診断CTA。 */
+.area-cta-wrap { margin-top: 16px; }
 /* 都道府県レイヤーの他7項目(折りたたみの節)。窓口一覧の直下。 */
 .pref-section { margin-top: 14px; border-top: 1px solid var(--color-line, #e3ddd0); padding-top: 10px; }
 .pref-section > summary.pref-section-h { cursor: pointer; font-weight: 700; color: var(--color-ink); padding: 6px 0; }
@@ -242,7 +251,15 @@ main.wrap { padding-top: 20px; padding-bottom: 24px; }
 .pref-item-notfound { margin: 6px 0 0; color: var(--color-ink-soft); }
 /* 地域選択の前後で診断へ橋を架ける2ブロック(A: 常時 / B: 地域選択時のみ) */
 .bridge-a { margin: 20px 0 12px; }
-.bridge-b { margin: 14px 0; }
+/* (B) は「ここから先が変わる」転換点。周囲に埋もれないよう囲み・背景・余白で区切る(文言は不変・見た目のみ)。 */
+.bridge-b {
+  margin: 18px 0;
+  padding: 16px 18px;
+  background: var(--color-bg-section);
+  border: 1px solid var(--color-line);
+  border-left: 6px solid var(--color-kaki);
+  border-radius: var(--radius);
+}
 .bridge-a p, .bridge-b p { margin: 0 0 10px; }
 .bridge-a p:last-child, .bridge-b p:last-child { margin-bottom: 0; }
 /* 「下のボタンから追加をリクエストできます」の“ボタン”。遷移先が mailto/フォームURLなので a で実装 */

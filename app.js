@@ -237,16 +237,18 @@
     else showRaw('screen-top');
   }
 
+  function primaryCtaState() {
+    return loadProfile()
+      ? { label: 'わが家の備えに戻る', action: function () { openHome(); } }
+      : { label: '5分で、わが家の手札を確認する', action: startDiagnosis };
+  }
+
   function updateTopPrimary() {
     var btn = $('btn-start');
     if (!btn) return;
-    if (loadProfile()) {
-      btn.textContent = 'わが家の備えに戻る';
-      btn.onclick = function () { openHome(); };
-    } else {
-      btn.textContent = '5分で、わが家の手札を確認する';
-      btn.onclick = startDiagnosis;
-    }
+    var c = primaryCtaState();
+    btn.textContent = c.label;
+    btn.onclick = c.action;
   }
 
   function esc(s) {
@@ -381,12 +383,27 @@
     return '(' + m[1] + '年' + parseInt(m[2], 10) + '月確認)';
   }
 
+  function hasVerifiedContent(verified) {
+    if (!verified) return false;
+    var items = verified.items || {};
+    return Object.keys(items).length > 0 || ((verified.extra_items || []).length > 0);
+  }
+
+  function areaWinSummaryLabel(muni, verified) {
+    return hasVerifiedContent(verified)
+      ? muni + 'の窓口を見る(電話で確かめた費用や条件も載せています)'
+      : muni + 'の窓口を見る(公式ページへの入口をご案内します)';
+  }
+
   function renderWindowList(muni, win, verified) {
     var vItems = (verified && verified.items) || {};
     var vLabel = (verified && verified.confirmed_label) || '';
-    var html = '';
-    html += '<p class="area-win-h">' + esc(muni) + 'の窓口</p>';
-    html += '<p>いまご案内できるのは、市の公式ページへの入口までです。費用や対象になる条件は市によって異なりますので、くわしくはリンク先か、お電話で直接お確かめください。</p>';
+    var confirmed = hasVerifiedContent(verified);
+    var html = '<details class="area-win-section"><summary class="area-win-summary">' +
+      esc(areaWinSummaryLabel(muni, verified)) + '</summary><div class="area-win-body">';
+    if (!confirmed) {
+      html += '<p>いまご案内できるのは、市の公式ページへの入口までです。費用や対象になる条件は市によって異なりますので、くわしくはリンク先か、お電話で直接お確かめください。</p>';
+    }
     html += '<ul class="area-links area-win-list">';
     var seenUrls = {};
     WINDOW_ITEMS.forEach(function (it) {
@@ -400,10 +417,10 @@
         return;
       }
       html += '<li class="area-win-verified"><span class="area-win-label">' + esc(it.label) + '</span>' +
-        (url ? ' → <a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">公式ページを見る</a>' : '') +
         '<div class="area-win-detail">' + rich(v.detail) + '</div>' +
         (v.contact ? '<div class="area-win-contact">' + rich(v.contact) + '</div>' : '') +
         (vLabel ? '<div class="area-win-confirmed">' + esc(vLabel) + '</div>' : '') +
+        (url ? '<div class="area-win-official"><a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">公式ページを見る</a></div>' : '') +
         '</li>';
     });
     ((verified && verified.extra_items) || []).forEach(function (ex) {
@@ -417,7 +434,13 @@
     html += '<p>ここに出ていないことは、高齢福祉の担当課におたずねになるのが近道です。</p>';
     html += '<p class="area-win-date">' + checkedMonthLabel(win.checked_at) + '</p>';
     html += '<p>この地域の情報をもっとくわしくしてほしい、というご要望は<a id="area-request-win" class="area-request-link" href="' + esc(requestUrl(state.areaPref, muni)) + '" target="_blank" rel="noopener noreferrer">こちら</a>からお寄せください。</p>';
+    html += areaCtaHtml();
+    html += '</div></details>';
     return html;
+  }
+
+  function areaCtaHtml() {
+    return '<div class="area-cta-wrap"><button type="button" class="btn btn-primary area-cta"></button></div>';
   }
 
   var PREF_SECTION = {
@@ -479,6 +502,7 @@
       }
       html += '</div>';
     });
+    html += areaCtaHtml();
     html += '</div></details>';
     return html;
   }
@@ -514,6 +538,11 @@
     }
     html += renderPrefSection(state.areaPref);
     box.innerHTML = html;
+    var cta = primaryCtaState();
+    [].forEach.call(box.querySelectorAll('.area-cta'), function (b) {
+      b.textContent = cta.label;
+      b.onclick = cta.action;
+    });
   }
 
   function renderMuniOptions(pref) {
@@ -2256,6 +2285,10 @@
       substitute: substitute,
       resolveSharp7119: resolveSharp7119,
       sharp7119CardBlock: sharp7119CardBlock,
+      renderWindowList: renderWindowList,
+      renderPrefSection: renderPrefSection,
+      areaWinSummaryLabel: areaWinSummaryLabel,
+      hasVerifiedContent: hasVerifiedContent,
       PLACEHOLDER_DEFS: PLACEHOLDER_DEFS,
       OPTIONAL_PLACEHOLDERS: OPTIONAL_PLACEHOLDERS,
       PLACEHOLDER_FALLBACK: PLACEHOLDER_FALLBACK
