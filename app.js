@@ -440,7 +440,7 @@
   }
 
   function areaCtaHtml() {
-    return '<div class="area-cta-wrap"><button type="button" class="btn btn-primary area-cta"></button></div>';
+    return '<div class="area-cta-wrap"><button type="button" class="btn btn-ghost area-cta"></button></div>';
   }
 
   var PREF_SECTION = {
