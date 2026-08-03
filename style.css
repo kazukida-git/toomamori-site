@@ -72,8 +72,8 @@ html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
   font-family: var(--font-body);
-  font-size: 18px;
-  line-height: 1.7;
+  font-size: 20px;
+  line-height: 1.9;
   color: var(--fg);
   background: var(--bg);
 }
@@ -100,7 +100,7 @@ body {
   color: var(--color-bg);
   padding: 12px 0;
 }
-.site-title { font-size: 24px; margin: 0; font-weight: 400; line-height: 1.2; }
+.site-title { font-size: 26px; margin: 0; font-weight: 400; line-height: 1.2; }
 .site-title-btn {
   font: inherit; font-family: var(--font-logo); color: inherit;
   letter-spacing: 0.04em;
@@ -142,8 +142,8 @@ main.wrap { padding-top: 20px; padding-bottom: 24px; }
 .hidden { display: none !important; }
 
 /* ---- トップ ---- */
-.lead { font-size: 19px; }
-.note { color: var(--fg-muted); font-size: 17px; }
+.lead { font-size: 22px; }
+.note { color: var(--fg-muted); font-size: 18px; }
 
 .privacy-box {
   background: var(--accent-light);
@@ -162,14 +162,14 @@ main.wrap { padding-top: 20px; padding-bottom: 24px; }
 }
 .privacy-box--about p { font-size: 16px; margin: 0 0 12px; }
 .privacy-box--about p:last-child { margin-bottom: 0; }
-.privacy-box--about .privacy-aside { font-size: 13px; color: var(--color-ink-soft); }
+.privacy-box--about .privacy-aside { font-size: 14px; color: var(--color-ink-soft); }
 
 .field { margin: 24px 0; }
 .field-label {
   display: block;
   font-weight: 700;
   margin-bottom: 10px;
-  font-size: 17px;
+  font-size: 18px;
 }
 .area-choices { display: flex; gap: 12px; flex-wrap: wrap; }
 /* 全国の都道府県 → 市区町村(仕様4.3 §2-1) */
@@ -177,7 +177,7 @@ main.wrap { padding-top: 20px; padding-bottom: 24px; }
   flex: 1 1 45%;
   min-height: 56px;
   min-width: 140px;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
   font-family: inherit;
   color: var(--accent);
@@ -188,21 +188,21 @@ main.wrap { padding-top: 20px; padding-bottom: 24px; }
   padding: 10px;
 }
 .area-select:disabled { color: var(--color-ink-soft); background: var(--color-bg-section); cursor: not-allowed; }
-.area-reason { font-size: 15px; color: var(--fg-muted); margin: 0 0 10px; }
-.area-help { font-size: 15px; color: var(--fg-muted); margin-top: 8px; }
+.area-reason { font-size: 17px; color: var(--fg-muted); margin: 0 0 10px; }
+.area-help { font-size: 17px; color: var(--fg-muted); margin-top: 8px; }
 
 /* 選択した市区町村の案内(整備済み/未整備) */
 .area-notice {
   margin-top: 12px;
-  padding: 14px 16px;
+  padding: 20px 22px;
   border: 1px solid var(--color-line);
   border-left: 6px solid var(--color-kaki);
   border-radius: var(--radius);
   background: var(--color-soft);
-  font-size: 16px;
-  line-height: 1.7;
+  font-size: 18px;
+  line-height: 1.9;
 }
-.area-notice p { margin: 0 0 8px; }
+.area-notice p { margin: 0 0 12px; }
 .area-notice p:last-child { margin-bottom: 0; }
 .area-notice .area-ready { font-weight: 700; color: var(--color-ink); }
 .area-links { margin: 8px 0; padding-left: 1.3em; }
@@ -210,33 +210,36 @@ main.wrap { padding-top: 20px; padding-bottom: 24px; }
 /* #7119 の地域状態ブロック(カード先頭)。番号/受付時間・確認案内・note を控えめな囲みで。 */
 .sharp7119-state {
   background: var(--color-soft); border-left: 4px solid var(--color-kaki);
-  border-radius: 6px; padding: 8px 12px; margin: 0 0 10px; font-size: 17px; line-height: 1.6;
+  border-radius: 6px; padding: 12px 16px; margin: 0 0 14px; font-size: 19px; line-height: 1.9;
 }
-.sharp7119-state p { margin: 0 0 4px; }
+.sharp7119-state p { margin: 0 0 8px; }
 .sharp7119-state p:last-child { margin-bottom: 0; }
-.sharp7119-state .s7-alt, .sharp7119-state .s7-note { font-size: 13px; color: var(--color-ink-soft); }
+.sharp7119-state .s7-alt, .sharp7119-state .s7-note { font-size: 14px; color: var(--color-ink-soft); }
 .sharp7119-state a { color: var(--color-kaki-text); font-weight: 700; }
 .area-notice a { color: var(--color-kaki-text); font-weight: 400; }
 /* 地域の窓口一覧(表示3段階の中段)。既存 area-notice の囲みをそのまま使う。 */
-.area-notice .area-win-h { font-weight: 700; color: var(--color-ink); font-size: 17px; margin: 0 0 8px; }
-.area-win-list { margin: 8px 0; }
-.area-win-list li { margin-bottom: 8px; }
-.area-notice .area-win-date { font-size: 13px; color: var(--color-ink-soft); }
-/* 電話確認済みの窓口(項目ごとに詳細+窓口+確認日を統合表示) */
-.area-win-verified { margin: 4px 0 12px; }
-.area-win-verified .area-win-label { font-weight: 700; color: var(--color-ink); }
-.area-win-detail { margin: 4px 0 4px; font-size: 18px; }
-.area-win-contact { margin: 2px 0; font-size: 17px; color: var(--color-ink); }
-.area-win-confirmed { margin: 2px 0 0; font-size: 12px; color: var(--color-ink-soft); }
-/* 市窓口の折りたたみ(県窓口と同じ体裁)。既定は閉じた状態。 */
-.area-win-section { margin: 4px 0 6px; }
-.area-win-section > summary.area-win-summary { cursor: pointer; font-weight: 700; color: var(--color-ink); padding: 6px 0; }
-.area-win-body { padding: 4px 0 2px; }
-/* 調べた内容(費用・条件)を主役にし、公式ページへのリンクは末尾に控えめに置く(太字→標準・余白で分離。文字サイズは変えない)。 */
-.area-win-official { margin: 6px 0 0; }
+.area-notice .area-win-h { font-weight: 700; color: var(--color-ink); font-size: 18px; margin: 0 0 8px; }
+.area-win-list { margin: 12px 0; }
+.area-win-list li { margin-bottom: 16px; }
+.area-notice .area-win-date { font-size: 14px; color: var(--color-ink-soft); }
+/* 電話確認済みの窓口(項目ごとに詳細+窓口+確認日を統合表示)。ブロック間に明確な間を入れる。 */
+.area-win-verified { margin: 0 0 24px; padding-bottom: 20px; border-bottom: 1px solid var(--color-line); }
+.area-win-verified:last-child { border-bottom: none; }
+.area-win-verified .area-win-label { display: block; font-weight: 700; color: var(--color-ink); margin: 0 0 8px; }
+.area-win-detail { margin: 0 0 10px; font-size: 20px; }
+.area-win-contact { margin: 10px 0 0; font-size: 19px; color: var(--color-ink); }
+.area-win-confirmed { margin: 10px 0 0; font-size: 14px; color: var(--color-ink-soft); }
+/* 市窓口の折りたたみ(県窓口と同じ体裁)。既定は閉じた状態。中身の上下余白を広げる。 */
+.area-win-section { margin: 6px 0 10px; }
+.area-win-section > summary.area-win-summary { cursor: pointer; font-weight: 700; color: var(--color-ink); padding: 10px 0; }
+.area-win-body { padding: 12px 0 6px; }
+/* 調べた内容(費用・条件)を主役にし、公式ページへのリンクは末尾に控えめに置く(太字→標準・余白で分離)。 */
+.area-win-official { margin: 12px 0 0; }
 .area-win-official a { font-weight: 400; }
-/* 折りたたみ内に増設した診断CTA。 */
-.area-cta-wrap { margin-top: 16px; }
+/* 折りたたみ内に増設した診断CTA。パネル余白分を負マージンで回収してフルブリード全幅にし、
+   狭い画面(360px)でもラベルが2行に折れないようにする(文字サイズは下げない)。 */
+.area-cta-wrap { margin: 24px -22px 0; }
+.area-cta { width: 100%; }
 /* 電話番号(tel:)のタップ領域を44px以上に。inline-flexで高さを確保し数字を縦中央へ。色・下線・文言は不変。 */
 .area-win-contact a[href^="tel:"],
 .pref-item-tel a[href^="tel:"] {
@@ -246,24 +249,24 @@ main.wrap { padding-top: 20px; padding-bottom: 24px; }
   padding: 4px 6px;
   box-sizing: border-box;
 }
-/* 都道府県レイヤーの他7項目(折りたたみの節)。窓口一覧の直下。 */
-.pref-section { margin-top: 14px; border-top: 1px solid var(--color-line, #e3ddd0); padding-top: 10px; }
-.pref-section > summary.pref-section-h { cursor: pointer; font-weight: 700; color: var(--color-ink); padding: 6px 0; }
-.pref-section-body { padding: 4px 0 2px; }
-.pref-section-intro { color: var(--color-ink-soft); margin: 6px 0 12px; }
-.pref-item { margin: 0 0 16px; padding: 10px 0 0; border-top: 1px dashed var(--color-line, #e3ddd0); }
-.pref-item-h { font-size: 17px; font-weight: 700; color: var(--color-ink); margin: 0 0 6px; }
-.pref-item-p { margin: 0 0 6px; }
-.pref-item-name { margin: 6px 0 2px; font-weight: 700; }
-.pref-item-tel, .pref-item-hours { margin: 2px 0; font-size: 17px; }
-.pref-item-date { font-size: 13px; color: var(--color-ink-soft); margin: 2px 0 0; }
-.pref-item-notfound { margin: 6px 0 0; color: var(--color-ink-soft); }
+/* 都道府県レイヤーの他7項目(折りたたみの節)。窓口一覧の直下。中身の余白を広げる。 */
+.pref-section { margin-top: 18px; border-top: 1px solid var(--color-line, #e3ddd0); padding-top: 14px; }
+.pref-section > summary.pref-section-h { cursor: pointer; font-weight: 700; color: var(--color-ink); padding: 10px 0; }
+.pref-section-body { padding: 12px 0 6px; }
+.pref-section-intro { color: var(--color-ink-soft); margin: 6px 0 16px; }
+.pref-item { margin: 0 0 24px; padding: 16px 0 0; border-top: 1px dashed var(--color-line, #e3ddd0); }
+.pref-item-h { font-size: 19px; font-weight: 700; color: var(--color-ink); margin: 0 0 8px; }
+.pref-item-p { font-size: 18px; margin: 0 0 8px; }
+.pref-item-name { margin: 10px 0 4px; font-weight: 700; }
+.pref-item-tel, .pref-item-hours { margin: 6px 0; font-size: 19px; }
+.pref-item-date { font-size: 14px; color: var(--color-ink-soft); margin: 6px 0 0; }
+.pref-item-notfound { margin: 8px 0 0; color: var(--color-ink-soft); }
 /* 地域選択の前後で診断へ橋を架ける2ブロック(A: 常時 / B: 地域選択時のみ) */
 .bridge-a { margin: 20px 0 12px; }
 /* (B) は「ここから先が変わる」転換点。周囲に埋もれないよう囲み・背景・余白で区切る(文言は不変・見た目のみ)。 */
 .bridge-b {
-  margin: 18px 0;
-  padding: 16px 18px;
+  margin: 22px 0;
+  padding: 22px 24px;
   background: var(--color-bg-section);
   border: 1px solid var(--color-line);
   border-left: 6px solid var(--color-kaki);
@@ -293,7 +296,7 @@ main.wrap { padding-top: 20px; padding-bottom: 24px; }
   gap: 8px;
   min-height: 52px;
   padding: 12px 20px;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
   border-radius: var(--radius);
   border: 2px solid transparent;
@@ -454,7 +457,7 @@ a:focus-visible {
   margin-top: 12px;
   padding-top: 10px;
   border-top: 1px dashed var(--border);
-  font-size: 13px;
+  font-size: 14px;
   color: var(--fg-muted);
 }
 .checked-note span { display: inline-block; margin-right: 12px; }
@@ -621,7 +624,7 @@ a:focus-visible {
 }
 .card-sec-b { font-size: 17px; }
 .card-p { font-size: 17px; margin: 0 0 10px; }
-.cost-note { font-size: 13px; color: var(--fg-muted); margin: 6px 0 0; }
+.cost-note { font-size: 14px; color: var(--fg-muted); margin: 6px 0 0; }
 .card a[href^="tel:"] { font-weight: 700; color: var(--color-kaki-text); white-space: nowrap; } /* リンク=柿(テキストはAA濃色) */
 
 /* 台本(そのまま言えばOK) */
@@ -631,7 +634,7 @@ a:focus-visible {
   padding: 12px 14px; margin: 10px 0;
 }
 .script-label {
-  display: inline-block; font-size: 13px; font-weight: 800;
+  display: inline-block; font-size: 14px; font-weight: 800;
   color: #fff; background: var(--later); border-radius: 999px;
   padding: 2px 12px; margin-bottom: 8px;
 }
@@ -1092,7 +1095,7 @@ details[open] .fold-group-h::before { transform: rotate(45deg); }
   display: inline-block;
   background: var(--primary);
   color: #fff;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   border-radius: 6px;
   padding: 2px 10px;
@@ -1231,7 +1234,7 @@ details[open] .fold-group-h::before { transform: rotate(45deg); }
 .mame-item[open] .mame-summary::after { transform: translateY(-30%) rotate(-135deg); }
 .mame-exp {
   display: inline-block;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--accent);
   background: var(--accent-light);
