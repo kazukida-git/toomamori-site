@@ -72,7 +72,7 @@ html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
   font-family: var(--font-body);
-  font-size: 20px;
+  font-size: 23px;
   line-height: 1.9;
   color: var(--fg);
   background: var(--bg);
@@ -100,7 +100,7 @@ body {
   color: var(--color-bg);
   padding: 12px 0;
 }
-.site-title { font-size: 26px; margin: 0; font-weight: 400; line-height: 1.2; }
+.site-title { font-size: 28px; margin: 0; font-weight: 400; line-height: 1.2; }
 .site-title-btn {
   font: inherit; font-family: var(--font-logo); color: inherit;
   letter-spacing: 0.04em;
@@ -142,8 +142,8 @@ main.wrap { padding-top: 20px; padding-bottom: 24px; }
 .hidden { display: none !important; }
 
 /* ---- トップ ---- */
-.lead { font-size: 22px; }
-.note { color: var(--fg-muted); font-size: 18px; }
+.lead { font-size: 25px; }
+.note { color: var(--fg-muted); font-size: 20px; }
 
 .privacy-box {
   background: var(--accent-light);
@@ -162,14 +162,14 @@ main.wrap { padding-top: 20px; padding-bottom: 24px; }
 }
 .privacy-box--about p { font-size: 16px; margin: 0 0 12px; }
 .privacy-box--about p:last-child { margin-bottom: 0; }
-.privacy-box--about .privacy-aside { font-size: 14px; color: var(--color-ink-soft); }
+.privacy-box--about .privacy-aside { font-size: 15px; color: var(--color-ink-soft); }
 
 .field { margin: 24px 0; }
 .field-label {
   display: block;
   font-weight: 700;
   margin-bottom: 10px;
-  font-size: 18px;
+  font-size: 20px;
 }
 .area-choices { display: flex; gap: 12px; flex-wrap: wrap; }
 /* 全国の都道府県 → 市区町村(仕様4.3 §2-1) */
@@ -177,7 +177,7 @@ main.wrap { padding-top: 20px; padding-bottom: 24px; }
   flex: 1 1 45%;
   min-height: 56px;
   min-width: 140px;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
   font-family: inherit;
   color: var(--accent);
@@ -188,8 +188,8 @@ main.wrap { padding-top: 20px; padding-bottom: 24px; }
   padding: 10px;
 }
 .area-select:disabled { color: var(--color-ink-soft); background: var(--color-bg-section); cursor: not-allowed; }
-.area-reason { font-size: 17px; color: var(--fg-muted); margin: 0 0 10px; }
-.area-help { font-size: 17px; color: var(--fg-muted); margin-top: 8px; }
+.area-reason { font-size: 19px; color: var(--fg-muted); margin: 0 0 10px; }
+.area-help { font-size: 19px; color: var(--fg-muted); margin-top: 8px; }
 
 /* 選択した市区町村の案内(整備済み/未整備) */
 .area-notice {
@@ -199,7 +199,7 @@ main.wrap { padding-top: 20px; padding-bottom: 24px; }
   border-left: 6px solid var(--color-kaki);
   border-radius: var(--radius);
   background: var(--color-soft);
-  font-size: 18px;
+  font-size: 21px;
   line-height: 1.9;
 }
 .area-notice p { margin: 0 0 12px; }
@@ -210,25 +210,25 @@ main.wrap { padding-top: 20px; padding-bottom: 24px; }
 /* #7119 の地域状態ブロック(カード先頭)。番号/受付時間・確認案内・note を控えめな囲みで。 */
 .sharp7119-state {
   background: var(--color-soft); border-left: 4px solid var(--color-kaki);
-  border-radius: 6px; padding: 12px 16px; margin: 0 0 14px; font-size: 19px; line-height: 1.9;
+  border-radius: 6px; padding: 12px 16px; margin: 0 0 14px; font-size: 22px; line-height: 1.9;
 }
 .sharp7119-state p { margin: 0 0 8px; }
 .sharp7119-state p:last-child { margin-bottom: 0; }
-.sharp7119-state .s7-alt, .sharp7119-state .s7-note { font-size: 14px; color: var(--color-ink-soft); }
+.sharp7119-state .s7-alt, .sharp7119-state .s7-note { font-size: 15px; color: var(--color-ink-soft); }
 .sharp7119-state a { color: var(--color-kaki-text); font-weight: 700; }
 .area-notice a { color: var(--color-kaki-text); font-weight: 400; }
 /* 地域の窓口一覧(表示3段階の中段)。既存 area-notice の囲みをそのまま使う。 */
 .area-notice .area-win-h { font-weight: 700; color: var(--color-ink); font-size: 18px; margin: 0 0 8px; }
 .area-win-list { margin: 12px 0; }
 .area-win-list li { margin-bottom: 16px; }
-.area-notice .area-win-date { font-size: 14px; color: var(--color-ink-soft); }
+.area-notice .area-win-date { font-size: 15px; color: var(--color-ink-soft); }
 /* 電話確認済みの窓口(項目ごとに詳細+窓口+確認日を統合表示)。ブロック間に明確な間を入れる。 */
 .area-win-verified { margin: 0 0 24px; padding-bottom: 20px; border-bottom: 1px solid var(--color-line); }
 .area-win-verified:last-child { border-bottom: none; }
 .area-win-verified .area-win-label { display: block; font-weight: 700; color: var(--color-ink); margin: 0 0 8px; }
-.area-win-detail { margin: 0 0 10px; font-size: 20px; }
-.area-win-contact { margin: 10px 0 0; font-size: 19px; color: var(--color-ink); }
-.area-win-confirmed { margin: 10px 0 0; font-size: 14px; color: var(--color-ink-soft); }
+.area-win-detail { margin: 0 0 10px; font-size: 23px; }
+.area-win-contact { margin: 10px 0 0; font-size: 22px; color: var(--color-ink); }
+.area-win-confirmed { margin: 10px 0 0; font-size: 15px; color: var(--color-ink-soft); }
 /* 市窓口の折りたたみ(県窓口と同じ体裁)。既定は閉じた状態。中身の上下余白を広げる。 */
 .area-win-section { margin: 6px 0 10px; }
 .area-win-section > summary.area-win-summary { cursor: pointer; font-weight: 700; color: var(--color-ink); padding: 10px 0; }
@@ -255,11 +255,11 @@ main.wrap { padding-top: 20px; padding-bottom: 24px; }
 .pref-section-body { padding: 12px 0 6px; }
 .pref-section-intro { color: var(--color-ink-soft); margin: 6px 0 16px; }
 .pref-item { margin: 0 0 24px; padding: 16px 0 0; border-top: 1px dashed var(--color-line, #e3ddd0); }
-.pref-item-h { font-size: 19px; font-weight: 700; color: var(--color-ink); margin: 0 0 8px; }
-.pref-item-p { font-size: 18px; margin: 0 0 8px; }
+.pref-item-h { font-size: 22px; font-weight: 700; color: var(--color-ink); margin: 0 0 8px; }
+.pref-item-p { font-size: 21px; margin: 0 0 8px; }
 .pref-item-name { margin: 10px 0 4px; font-weight: 700; }
-.pref-item-tel, .pref-item-hours { margin: 6px 0; font-size: 19px; }
-.pref-item-date { font-size: 14px; color: var(--color-ink-soft); margin: 6px 0 0; }
+.pref-item-tel, .pref-item-hours { margin: 6px 0; font-size: 22px; }
+.pref-item-date { font-size: 15px; color: var(--color-ink-soft); margin: 6px 0 0; }
 .pref-item-notfound { margin: 8px 0 0; color: var(--color-ink-soft); }
 /* 地域選択の前後で診断へ橋を架ける2ブロック(A: 常時 / B: 地域選択時のみ) */
 .bridge-a { margin: 20px 0 12px; }
@@ -295,8 +295,8 @@ main.wrap { padding-top: 20px; padding-bottom: 24px; }
   justify-content: center;
   gap: 8px;
   min-height: 52px;
-  padding: 12px 20px;
-  font-size: 20px;
+  padding: 12px 12px;
+  font-size: 22px;
   font-weight: 700;
   border-radius: var(--radius);
   border: 2px solid transparent;
@@ -607,7 +607,7 @@ a:focus-visible {
 .card-knowledge { border-left: 6px solid var(--color-kaki); } /* knowledge=柿(仕様8-2) */
 .card-head { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
 .card-name { font-size: 19px; font-weight: 800; }
-.badge-status { font-size: 13px; font-weight: 700; border-radius: 999px; padding: 3px 12px; color: #fff; }
+.badge-status { font-size: 16px; font-weight: 700; border-radius: 999px; padding: 3px 12px; color: #fff; }
 .badge-avail { background: var(--ok); }
 .badge-prep { background: var(--color-kaki-soft); color: var(--color-ink); } /* 柿の淡面+墨(白文字を柿地に載せない, AA維持) */
 .badge-na { background: var(--color-ink-soft); }
@@ -749,12 +749,12 @@ details[open] .fold-group-h::before { transform: rotate(45deg); }
 .chip-unprep { font-size: 12px; color: var(--primary); font-weight: 800; }
 .chip-tel {
   background: var(--primary); color: #fff !important; text-decoration: none;
-  border-radius: 999px; padding: 1px 8px; font-size: 13px;
+  border-radius: 999px; padding: 1px 8px; font-size: 16px;
 }
 .emg-nav { margin-top: 22px; }
 .chip-name { font-weight: 800; margin-left: 4px; }
 .chip-goto {
-  font-size: 13px; color: var(--accent); font-weight: 800;
+  font-size: 14px; color: var(--accent); font-weight: 800;
   background: var(--color-soft); border: 1px solid var(--color-line); border-radius: 999px;
   padding: 2px 10px; cursor: pointer;
   /* タップ領域44px(見た目のフォント/余白は据え置き) */
