@@ -125,6 +125,32 @@
     };
   }
 
+  function prerequisitesMet(prereqs, statuses, answers, completed) {
+    var list = prereqs || [];
+    var a = answers || {};
+    var st = statuses || {};
+    var done = completed || [];
+    var unmet = [], unknown = false;
+    for (var i = 0; i < list.length; i++) {
+      var p = list[i], ok = false;
+      if (p.type === 'card') {
+        ok = st[p.card_id] === 'available' || done.indexOf(p.card_id) !== -1;
+      } else if (p.type === 'certification') {
+        if (a.q_care_level === 'yoshien' || a.q_care_level === 'yokaigo') ok = true;
+        else if (a.q_care_level === 'none') ok = false;
+        else { ok = false; unknown = true; }
+      } else if (p.type === 'care_plan') {
+        if (a.q_care_manager === 'yes') ok = true;
+        else if (a.q_care_manager === 'no') ok = false;
+        else { ok = false; unknown = true; }
+      } else {
+        ok = false; unknown = true;
+      }
+      if (!ok) unmet.push(p);
+    }
+    return { met: unmet.length === 0, unmet: unmet, unknown: unknown };
+  }
+
   function defaultCaregiverBranch(answers) {
     var a = normalizeAnswers(answers || {});
     return a.q_household === 'always_someone' ? 'A' : 'B';
@@ -388,6 +414,7 @@
     deriveJudgements: deriveJudgements,
     deriveFlags: deriveFlags,
     deriveCardStatuses: deriveCardStatuses,
+    prerequisitesMet: prerequisitesMet,
     defaultCaregiverBranch: defaultCaregiverBranch,
     fukushiYushoEligible: fukushiYushoEligible,
     deriveMirror: deriveMirror,
