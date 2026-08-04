@@ -617,6 +617,9 @@ a:focus-visible {
   font-size: 22px; background: var(--color-bg-section); border-radius: 8px;
   padding: 8px 12px; margin: 0 0 12px; color: var(--fg-muted);
 }
+/* 前提ヒント(準備すれば使えるカード): 本文より控えめ・うすめ墨。font-sizeは本文継承(下限は既存のまま)。 */
+.prereq-hint { color: var(--color-ink-soft); margin: 0 0 10px; }
+.card-done-wrap { margin-top: 14px; }
 .card-sec { margin-bottom: 14px; }
 .card-sec-h {
   font-size: 26px; font-weight: 800; color: var(--accent);

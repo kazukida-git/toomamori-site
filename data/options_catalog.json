@@ -20,6 +20,7 @@
  "cards": [
   {
    "card_id": "family_responder",
+   "prerequisites": [],
    "name": "駆けつけ役(家族・親族)",
    "category": "private_person",
    "status_type": "derived",
@@ -46,6 +47,7 @@
   },
   {
    "card_id": "key_access",
+   "prerequisites": [],
    "name": "家に入る手段(合鍵・キーボックス)",
    "category": "info",
    "status_type": "derived",
@@ -72,6 +74,7 @@
   },
   {
    "card_id": "emergency_call_system",
+   "prerequisites": [],
    "name": "緊急通報システム",
    "category": "public",
    "status_type": "derived",
@@ -95,6 +98,7 @@
   },
   {
    "card_id": "care_manager",
+   "prerequisites": [],
    "name": "ケアマネジャー",
    "category": "public",
    "status_type": "derived",
@@ -124,6 +128,11 @@
   },
   {
    "card_id": "care_taxi",
+   "prerequisites": [
+    {
+     "type": "care_plan"
+    }
+   ],
    "name": "介護タクシー",
    "category": "private_service",
    "status_type": "derived",
@@ -150,6 +159,7 @@
   },
   {
    "card_id": "info_set",
+   "prerequisites": [],
    "name": "救急情報セット(保険証・お薬手帳・介護保険証)",
    "category": "info",
    "status_type": "derived",
@@ -168,6 +178,7 @@
   },
   {
    "card_id": "sharp7119",
+   "prerequisites": [],
    "name": "救急電話相談(#7119)",
    "category": "public",
    "status_type": "always",
@@ -193,6 +204,7 @@
   },
   {
    "card_id": "q_jyosuke",
+   "prerequisites": [],
    "name": "Q助(全国版救急受診アプリ)",
    "category": "public",
    "status_type": "always",
@@ -212,6 +224,7 @@
   },
   {
    "card_id": "call_119",
+   "prerequisites": [],
    "name": "119番(救急)",
    "category": "public",
    "status_type": "always",
@@ -233,6 +246,7 @@
   },
   {
    "card_id": "chiiki_houkatsu",
+   "prerequisites": [],
    "name": "地域包括支援センター",
    "category": "public",
    "status_type": "always",
@@ -254,6 +268,7 @@
   },
   {
    "card_id": "family_doctor",
+   "prerequisites": [],
    "name": "かかりつけ医",
    "category": "public",
    "status_type": "derived",
@@ -280,6 +295,7 @@
   },
   {
    "card_id": "touban_i",
+   "prerequisites": [],
    "name": "当番医・夜間休日診療",
    "category": "public",
    "status_type": "always",
@@ -292,6 +308,11 @@
   },
   {
    "card_id": "helper_office",
+   "prerequisites": [
+    {
+     "type": "care_plan"
+    }
+   ],
    "name": "ヘルパー事業所",
    "category": "public",
    "status_type": "derived",
@@ -305,6 +326,11 @@
   },
   {
    "card_id": "visiting_nurse",
+   "prerequisites": [
+    {
+     "type": "care_plan"
+    }
+   ],
    "name": "訪問看護",
    "category": "public",
    "status_type": "derived",
@@ -319,6 +345,7 @@
   },
   {
    "card_id": "watch_service",
+   "prerequisites": [],
    "name": "見守りサービス(民間)",
    "category": "private_service",
    "status_type": "derived",
@@ -342,6 +369,11 @@
   },
   {
    "card_id": "short_stay",
+   "prerequisites": [
+    {
+     "type": "care_plan"
+    }
+   ],
    "name": "ショートステイ(緊急ショート含む)",
    "category": "public",
    "status_type": "derived",
@@ -365,6 +397,7 @@
   },
   {
    "card_id": "work_leave",
+   "prerequisites": [],
    "name": "勤め先の制度(介護休業・介護休暇・短時間勤務)",
    "category": "money_work",
    "status_type": "knowledge",
@@ -397,6 +430,11 @@
   },
   {
    "card_id": "kougaku_kaigo",
+   "prerequisites": [
+    {
+     "type": "care_plan"
+    }
+   ],
    "name": "高額介護サービス費",
    "category": "money_work",
    "status_type": "knowledge",
@@ -431,6 +469,7 @@
   },
   {
    "card_id": "shobyo_teate",
+   "prerequisites": [],
    "name": "傷病手当金(あなた自身が倒れたとき)",
    "category": "money_work",
    "status_type": "knowledge",
@@ -450,6 +489,7 @@
   },
   {
    "card_id": "fukushi_taxi_ken",
+   "prerequisites": [],
    "name": "福祉タクシー利用券(川口市)",
    "category": "money_work",
    "status_type": "knowledge",
@@ -468,6 +508,11 @@
   },
   {
    "card_id": "fukushi_yusho",
+   "prerequisites": [
+    {
+     "type": "certification"
+    }
+   ],
    "name": "福祉有償運送",
    "category": "money_work",
    "status_type": "knowledge",
@@ -490,18 +535,25 @@
   },
   {
    "card_id": "kikoe",
+   "prerequisites": [],
    "name": "聞こえ(耳)——「電話に出ない」の意外な原因",
    "category": "public",
    "status_type": "knowledge"
   },
   {
    "card_id": "shisetsu_okane",
+   "prerequisites": [
+    {
+     "type": "certification"
+    }
+   ],
    "name": "施設のお金の真実(特別養護老人ホーム)",
    "category": "money_work",
    "status_type": "knowledge"
   },
   {
    "card_id": "shogaisha_kojo",
+   "prerequisites": [],
    "name": "障害者控除対象者認定書",
    "category": "money_work",
    "status_type": "knowledge",
@@ -509,6 +561,11 @@
   },
   {
    "card_id": "kougaku_gassan",
+   "prerequisites": [
+    {
+     "type": "care_plan"
+    }
+   ],
    "name": "高額医療・高額介護合算療養費",
    "category": "money_work",
    "status_type": "knowledge",
@@ -516,6 +573,7 @@
   },
   {
    "card_id": "nenkin_kyufu",
+   "prerequisites": [],
    "name": "年金生活者支援給付金",
    "category": "money_work",
    "status_type": "knowledge",
@@ -523,6 +581,7 @@
   },
   {
    "card_id": "parking_permit",
+   "prerequisites": [],
    "name": "駐車禁止等除外標章",
    "category": "money_work",
    "status_type": "knowledge",
@@ -530,6 +589,7 @@
   },
   {
    "card_id": "self_down_plan",
+   "prerequisites": [],
    "name": "あなたが倒れたときの引き継ぎ(注意カード)",
    "category": "special",
    "status_type": "special",
@@ -551,6 +611,11 @@
   },
   {
    "card_id": "night_oncall_care",
+   "prerequisites": [
+    {
+     "type": "care_plan"
+    }
+   ],
    "name": "夜や急なときにも来てもらう(24時間対応のサービス)",
    "category": "public",
    "status_type": "knowledge",

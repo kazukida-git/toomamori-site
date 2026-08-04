@@ -1274,6 +1274,24 @@
     return html;
   }
 
+  var PREREQ_HINT = {
+    certification: '要介護認定を受けると、使えるようになります',
+    care_plan: 'ケアマネさんに相談してケアプランに入れてもらうと、使えるようになります',
+    card_care_manager: 'ケアマネさんとの契約が済むと、使えるようになります'
+  };
+  function prereqHintHtml(card) {
+    var prereqs = card && card.prerequisites;
+    if (!prereqs || !prereqs.length) return '';
+    var r = RulesEngine.prerequisitesMet(prereqs, state.statuses, state.answers, state.completed);
+    if (r.unknown || r.met) return '';
+    var out = '';
+    r.unmet.forEach(function (p) {
+      var key = p.type === 'card' ? ('card_' + p.card_id) : p.type;
+      if (PREREQ_HINT[key]) out += '<p class="prereq-hint">' + esc(PREREQ_HINT[key]) + '</p>';
+    });
+    return out;
+  }
+
   function renderCard(card, chain, status, mode) {
     var cls = 'card card-' + (status || card.status_type);
     var badge = '';
@@ -1289,13 +1307,22 @@
     else if (hasFaq(card.card_id)) body = faqBody(card, chain);
     else body = unpreparedBody(card, chain);
 
+    var prepExtra = '';
+    if (status === 'preparable') {
+      prepExtra += prereqHintHtml(card);
+      if (card.status_type === 'derived') {
+        prepExtra += '<div class="card-done-wrap"><button type="button" class="btn btn-secondary card-done-btn" data-card-done="' +
+          esc(card.card_id) + '">済んだので登録する</button></div>';
+      }
+    }
+
     if (mode === 'available' || mode === 'na' || mode === 'reference') {
       return '<details id="card-' + esc(card.card_id) + '" class="' + cls + '"><summary class="card-summary">' +
         '<span class="card-name">' + esc(card.name) + '</span>' + badge + '</summary>' +
         '<div class="card-body">' + body + '</div></details>';
     }
     return '<div id="card-' + esc(card.card_id) + '" class="' + cls + '"><div class="card-head"><span class="card-name">' + esc(card.name) + '</span>' + badge + '</div>' +
-      '<div class="card-body">' + body + '</div></div>';
+      '<div class="card-body">' + body + prepExtra + '</div></div>';
   }
 
   function telLinkHtml(phone) {
@@ -1706,6 +1733,12 @@
       if (btn && btn.classList && (btn.classList.contains('chip-goto') || (btn.classList.contains('bp-link') && btn.getAttribute('data-goto-card')))) {
         e.preventDefault();
         gotoCardInResult(btn.getAttribute('data-goto-card'));
+        return;
+      }
+      if (btn && btn.classList && btn.classList.contains('card-done-btn')) {
+        e.preventDefault();
+        markCardDone(btn.getAttribute('data-card-done'));
+        if (currentScreen() === 'screen-result') { var pr = loadProfile(); if (pr) { restoreProfile(pr); renderResult(pr); } }
         return;
       }
       if (btn && btn.classList && btn.classList.contains('btn-copy-script')) {
@@ -2285,6 +2318,7 @@
       substitute: substitute,
       resolveSharp7119: resolveSharp7119,
       sharp7119CardBlock: sharp7119CardBlock,
+      prereqHintHtml: prereqHintHtml,
       renderWindowList: renderWindowList,
       renderPrefSection: renderPrefSection,
       areaWinSummaryLabel: areaWinSummaryLabel,
