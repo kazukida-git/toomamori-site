@@ -63,7 +63,9 @@
   "T_unknown_time": [
    "emergency_call_system",
    "watch_service",
-   "key_access"
+   "key_access",
+   "night_oncall_care",
+   "kikoe"
   ],
   "T_self_down": [
    "self_down_plan",
@@ -79,12 +81,16 @@
   "T_daytime_gap": [
    "family_responder",
    "care_taxi",
-   "emergency_call_system"
+   "emergency_call_system",
+   "helper_office",
+   "night_oncall_care"
   ],
   "T_public_link": [
    "care_manager",
    "family_doctor",
-   "chiiki_houkatsu"
+   "chiiki_houkatsu",
+   "helper_office",
+   "visiting_nurse"
   ],
   "T_fall": [
    "care_manager",
@@ -95,7 +101,8 @@
    "sharp7119",
    "family_doctor",
    "care_taxi",
-   "info_set"
+   "info_set",
+   "visiting_nurse"
   ],
   "T_money": [
    "work_leave",
