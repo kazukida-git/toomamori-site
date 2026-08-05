@@ -1280,24 +1280,34 @@
     card_care_manager: 'ケアマネさんとの契約が済むと、使えるようになります',
     card_care_manager_unknown: 'ケアマネさんとの契約が済んでいれば、使えます'
   };
+  var PREREQ_ORDER = ['certification', 'card', 'care_plan'];
+  function prereqLineFor(p) {
+    var cm = state.answers.q_care_manager, cl = state.answers.q_care_level;
+    if (p.type === 'certification') {
+      var determinateUnmet = (cl === 'none') || (p.level === 'yokaigo' && cl === 'yoshien');
+      return determinateUnmet ? PREREQ_HINT.certification : '';
+    }
+    if (p.type === 'card' && p.card_id === 'care_manager') {
+      return (cm === 'no') ? PREREQ_HINT.card_care_manager : PREREQ_HINT.card_care_manager_unknown;
+    }
+    if (p.type === 'care_plan') {
+      return (cm === 'no') ? PREREQ_HINT.care_plan : '';
+    }
+    return '';
+  }
   function prereqHintHtml(card) {
     var prereqs = card && card.prerequisites;
     if (!prereqs || !prereqs.length) return '';
     var r = RulesEngine.prerequisitesMet(prereqs, state.statuses, state.answers, state.completed);
     if (r.met) return '';
-    var cm = state.answers.q_care_manager, cl = state.answers.q_care_level, out = '';
-    r.unmet.forEach(function (p) {
-      var line = '';
-      if (p.type === 'card' && p.card_id === 'care_manager') {
-        line = (cm === 'no') ? PREREQ_HINT.card_care_manager : PREREQ_HINT.card_care_manager_unknown;
-      } else if (p.type === 'certification') {
-        if (cl === 'none') line = PREREQ_HINT.certification;
-      } else if (p.type === 'care_plan') {
-        if (cm === 'no') line = PREREQ_HINT.care_plan;
-      }
-      if (line) out += '<p class="prereq-hint">' + esc(line) + '</p>';
+    var unmet = (r.unmet || []).slice().sort(function (a, b) {
+      return PREREQ_ORDER.indexOf(a.type) - PREREQ_ORDER.indexOf(b.type);
     });
-    return out;
+    for (var i = 0; i < unmet.length; i++) {
+      var line = prereqLineFor(unmet[i]);
+      if (line) return '<p class="prereq-hint">' + esc(line) + '</p>';
+    }
+    return '';
   }
 
   function renderCard(card, chain, status, mode) {

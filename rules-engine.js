@@ -94,9 +94,9 @@
       emergency_call_system:
         a.q_emergency_call_system === 'yes'
           ? 'available'
-          : f.F_alone_risk
-          ? 'preparable'
-          : 'not_applicable',
+          : a.q_household === 'always_someone'
+          ? 'not_applicable'
+          : 'preparable',
       care_manager: a.q_care_manager === 'yes' ? 'available' : 'preparable',
       care_taxi: a.q_care_taxi === 'yes' ? 'available' : 'preparable',
       info_set:
@@ -109,9 +109,9 @@
       watch_service:
         a.q_watch_service === 'yes'
           ? 'available'
-          : f.F_alone_risk
-          ? 'preparable'
-          : 'not_applicable',
+          : a.q_household === 'always_someone'
+          ? 'not_applicable'
+          : 'preparable',
       short_stay: a.q_short_stay === 'yes' ? 'available' : 'preparable',
       night_oncall_care: 'preparable'
     };
@@ -128,9 +128,15 @@
       if (p.type === 'card') {
         ok = st[p.card_id] === 'available' || done.indexOf(p.card_id) !== -1;
       } else if (p.type === 'certification') {
-        if (a.q_care_level === 'yoshien' || a.q_care_level === 'yokaigo') ok = true;
-        else if (a.q_care_level === 'none') ok = false;
-        else { ok = false; unknown = true; }
+        if (p.level === 'yokaigo') {
+          if (a.q_care_level === 'yokaigo') ok = true;
+          else if (a.q_care_level === 'none' || a.q_care_level === 'yoshien') ok = false;
+          else { ok = false; unknown = true; }
+        } else {
+          if (a.q_care_level === 'yoshien' || a.q_care_level === 'yokaigo') ok = true;
+          else if (a.q_care_level === 'none') ok = false;
+          else { ok = false; unknown = true; }
+        }
       } else if (p.type === 'care_plan') {
         if (a.q_care_manager === 'yes') ok = true;
         else if (a.q_care_manager === 'no') ok = false;

@@ -616,6 +616,10 @@
    "card_id": "night_oncall_care",
    "prerequisites": [
     {
+     "type": "certification",
+     "level": "yokaigo"
+    },
+    {
      "type": "card",
      "card_id": "care_manager"
     }
