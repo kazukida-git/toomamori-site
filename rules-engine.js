@@ -104,24 +104,16 @@
           ? 'available'
           : 'preparable',
       family_doctor: a.q_family_doctor === 'yes' ? 'available' : 'preparable',
-      helper_office: hasSvc('helper') ? 'available' : 'not_applicable',
-      visiting_nurse: hasSvc('visiting_nurse')
-        ? 'available'
-        : a.q_care_manager === 'yes'
-        ? 'preparable'
-        : 'not_applicable',
+      helper_office: hasSvc('helper') ? 'available' : 'preparable',
+      visiting_nurse: hasSvc('visiting_nurse') ? 'available' : 'preparable',
       watch_service:
         a.q_watch_service === 'yes'
           ? 'available'
           : f.F_alone_risk
           ? 'preparable'
           : 'not_applicable',
-      short_stay:
-        a.q_short_stay === 'yes'
-          ? 'available'
-          : a.q_care_manager === 'yes'
-          ? 'preparable'
-          : 'not_applicable'
+      short_stay: a.q_short_stay === 'yes' ? 'available' : 'preparable',
+      night_oncall_care: 'preparable'
     };
   }
 

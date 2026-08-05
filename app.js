@@ -1277,17 +1277,25 @@
   var PREREQ_HINT = {
     certification: '要介護認定を受けると、使えるようになります',
     care_plan: 'ケアマネさんに相談してケアプランに入れてもらうと、使えるようになります',
-    card_care_manager: 'ケアマネさんとの契約が済むと、使えるようになります'
+    card_care_manager: 'ケアマネさんとの契約が済むと、使えるようになります',
+    card_care_manager_unknown: 'ケアマネさんとの契約が済んでいれば、使えます'
   };
   function prereqHintHtml(card) {
     var prereqs = card && card.prerequisites;
     if (!prereqs || !prereqs.length) return '';
     var r = RulesEngine.prerequisitesMet(prereqs, state.statuses, state.answers, state.completed);
-    if (r.unknown || r.met) return '';
-    var out = '';
+    if (r.met) return '';
+    var cm = state.answers.q_care_manager, cl = state.answers.q_care_level, out = '';
     r.unmet.forEach(function (p) {
-      var key = p.type === 'card' ? ('card_' + p.card_id) : p.type;
-      if (PREREQ_HINT[key]) out += '<p class="prereq-hint">' + esc(PREREQ_HINT[key]) + '</p>';
+      var line = '';
+      if (p.type === 'card' && p.card_id === 'care_manager') {
+        line = (cm === 'no') ? PREREQ_HINT.card_care_manager : PREREQ_HINT.card_care_manager_unknown;
+      } else if (p.type === 'certification') {
+        if (cl === 'none') line = PREREQ_HINT.certification;
+      } else if (p.type === 'care_plan') {
+        if (cm === 'no') line = PREREQ_HINT.care_plan;
+      }
+      if (line) out += '<p class="prereq-hint">' + esc(line) + '</p>';
     });
     return out;
   }
