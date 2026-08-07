@@ -1277,6 +1277,7 @@
   var PREREQ_HINT = {
     certification: '要介護認定を受けると、使えるようになります',
     care_plan: 'ケアマネさんに相談してケアプランに入れてもらうと、使えるようになります',
+    care_plan_unknown: 'ケアプランに入っていれば、使えます',
     card_care_manager: 'ケアマネさんとの契約が済むと、使えるようになります',
     card_care_manager_unknown: 'ケアマネさんとの契約が済んでいれば、使えます'
   };
@@ -1291,7 +1292,7 @@
       return (cm === 'no') ? PREREQ_HINT.card_care_manager : PREREQ_HINT.card_care_manager_unknown;
     }
     if (p.type === 'care_plan') {
-      return (cm === 'no') ? PREREQ_HINT.care_plan : '';
+      return (cm === 'no') ? PREREQ_HINT.care_plan : PREREQ_HINT.care_plan_unknown;
     }
     return '';
   }
