@@ -619,6 +619,8 @@ a:focus-visible {
 }
 /* 前提ヒント(準備すれば使えるカード): 本文より控えめ・うすめ墨。font-sizeは本文継承(下限は既存のまま)。 */
 .prereq-hint { color: var(--color-ink-soft); margin: 0 0 10px; }
+/* 前提ヒントの続きに出す案内文。同じ扱い(うすめ墨)のまま、直前の一行に寄せて一続きに読ませる。 */
+.prereq-hint + .prereq-hint-cont { margin-top: -6px; }
 .card-done-wrap { margin-top: 14px; }
 .card-sec { margin-bottom: 14px; }
 .card-sec-h {

@@ -1296,6 +1296,10 @@
     }
     return '';
   }
+  function prereqNoteHtml(card) {
+    if (!card || !card.not_applicable_note) return '';
+    return '<p class="prereq-hint prereq-hint-cont">' + rich(card.not_applicable_note) + '</p>';
+  }
   function prereqHintHtml(card) {
     var prereqs = card && card.prerequisites;
     if (!prereqs || !prereqs.length) return '';
@@ -1306,7 +1310,7 @@
     });
     for (var i = 0; i < unmet.length; i++) {
       var line = prereqLineFor(unmet[i]);
-      if (line) return '<p class="prereq-hint">' + esc(line) + '</p>';
+      if (line) return '<p class="prereq-hint">' + esc(line) + '</p>' + prereqNoteHtml(card);
     }
     return '';
   }
