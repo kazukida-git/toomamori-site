@@ -42,46 +42,77 @@
  "rules": [
   {
    "rule_id": "r_no_first_response",
+   "cards": [
+    "family_responder",
+    "key_access"
+   ],
    "cost": "consult_this_week",
    "priority": 1
   },
   {
    "rule_id": "r_no_public_link",
+   "cards": [
+    "care_manager"
+   ],
    "cost": "consult_this_week",
    "priority": 1
   },
   {
    "rule_id": "r_no_entry",
+   "cards": [
+    "key_access"
+   ],
    "cost": "do_today",
    "priority": 2
   },
   {
    "rule_id": "r_no_info_share",
+   "cards": [
+    "info_set"
+   ],
    "cost": "do_today",
    "priority": 2
   },
   {
    "rule_id": "r_no_self_report",
+   "cards": [
+    "watch_service",
+    "emergency_call_system"
+   ],
    "cost": "consult_this_week",
    "priority": 3
   },
   {
    "rule_id": "r_caregiver_backup",
+   "cards": [
+    "short_stay"
+   ],
    "cost": "consult_this_week",
    "priority": 3
   },
   {
    "rule_id": "r_emergency_rule_unknown",
+   "cards": [
+    "info_set"
+   ],
    "cost": "do_today",
    "priority": 4
   },
   {
    "rule_id": "r_watch_gap",
+   "cards": [
+    "emergency_call_system",
+    "watch_service"
+   ],
    "cost": "consider_later",
    "priority": 4
   },
   {
    "rule_id": "r_transport_gap",
+   "cards": [
+    "care_taxi",
+    "family_responder"
+   ],
    "cost": "consider_later",
    "priority": 5
   }
