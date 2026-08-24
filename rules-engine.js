@@ -9,7 +9,6 @@
 
 
 
-
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
     module.exports = factory();
@@ -159,6 +158,72 @@
     return a.q_care_level === 'yoshien' || a.q_care_level === 'yokaigo';
   }
 
+  var VARIANT_PICKERS = {
+    r_no_public_link: function (a) {
+      return (a.q_care_level === 'yoshien' || a.q_care_level === 'yokaigo')
+        ? 'no_care_manager'
+        : 'no_certification';
+    }
+  };
+
+
+
+
+
+  function ruleText(rule, a) {
+    var vs = rule.variants;
+    if (vs && vs.length) {
+      var pick = VARIANT_PICKERS[rule.rule_id];
+      var id = pick ? pick(a) : vs[0].variant_id;
+      var v = null;
+      for (var i = 0; i < vs.length; i++) {
+        if (vs[i].variant_id === id) { v = vs[i]; break; }
+      }
+      if (!v) v = vs[0];
+      return {
+        variant_id: v.variant_id, headline: v.headline,
+        fact: v.fact || '', action: v.action
+      };
+    }
+    return {
+      variant_id: '', headline: rule.headline || '',
+      fact: rule.fact || '', action: rule.action || ''
+    };
+  }
+
+
+
+
+
+
+
+
+
+  function buildAlwaysShown(answers, rulesData) {
+    var a = normalizeAnswers(answers || {});
+    var list = (rulesData && rulesData.always_shown) || [];
+    return list.map(function (item) {
+      var vid = (a.q_self_down_backup === 'yes') ? 'backup_yes' : 'backup_other';
+      var vs = item.action_variants || [];
+      var v = null;
+      for (var i = 0; i < vs.length; i++) {
+        if (vs[i].variant_id === vid) { v = vs[i]; break; }
+      }
+      var body = v ? v.action : '';
+      var tail = item.action_tail || '';
+      return {
+        id: item.id,
+        headline: item.headline || '',
+        fact: item.fact || '',
+        variant_id: vid,
+        action_body: body,
+        action_tail: tail,
+        action: (body && tail) ? (body + '\n' + tail) : (body || tail),
+        cards: (item.cards || []).slice()
+      };
+    });
+  }
+
   var RULE_PREDICATES = {
     r_no_first_response: function (j) {
       return j.J1_first_response === 'ng';
@@ -200,6 +265,9 @@
 
 
 
+
+
+
   function evaluate(answers, rulesData) {
     var a = normalizeAnswers(answers || {});
     var judgements = deriveJudgements(a);
@@ -209,13 +277,20 @@
     var fired = [];
     for (var i = 0; i < rules.length; i++) {
       var rule = rules[i];
+      if (rule.retired) continue;
       var pred = RULE_PREDICATES[rule.rule_id];
       if (pred && pred(judgements, flags, a)) {
+        var t = ruleText(rule, a);
         fired.push({
           rule_id: rule.rule_id,
           cost: rule.cost,
           priority: rule.priority,
-          order: i
+          order: i,
+          variant_id: t.variant_id,
+          headline: t.headline,
+          fact: t.fact,
+          action: t.action,
+          cards: (rule.cards || []).slice()
         });
       }
     }
@@ -231,7 +306,8 @@
       firedRules: fired,
       firedRuleIds: fired.map(function (r) {
         return r.rule_id;
-      })
+      }),
+      alwaysShown: buildAlwaysShown(answers, rulesData)
     };
   }
 
@@ -424,6 +500,8 @@
     parkingPermitEligible: parkingPermitEligible,
     moneyPriorityCards: moneyPriorityCards,
     orderedPreparableCards: orderedPreparableCards,
+    ruleText: ruleText,
+    buildAlwaysShown: buildAlwaysShown,
     evaluate: evaluate,
     shortJudgements: shortJudgements
   };
