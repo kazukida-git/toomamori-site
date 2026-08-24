@@ -163,6 +163,10 @@
       return (a.q_care_level === 'yoshien' || a.q_care_level === 'yokaigo')
         ? 'no_care_manager'
         : 'no_certification';
+    },
+    r_no_info_share: function (a, raw) {
+      var loc = raw.q_info_location, sh = raw.q_contact_shared;
+      return (loc === 'no' || sh === 'no') ? 'not_shared' : 'unknown';
     }
   };
 
@@ -170,25 +174,29 @@
 
 
 
-  function ruleText(rule, a) {
+
+
+
+  function ruleText(rule, a, raw) {
+    var out = {
+      variant_id: '', headline: rule.headline || '',
+      fact: rule.fact || '', action: rule.action || ''
+    };
     var vs = rule.variants;
     if (vs && vs.length) {
       var pick = VARIANT_PICKERS[rule.rule_id];
-      var id = pick ? pick(a) : vs[0].variant_id;
+      var id = pick ? pick(a, raw || {}) : vs[0].variant_id;
       var v = null;
       for (var i = 0; i < vs.length; i++) {
         if (vs[i].variant_id === id) { v = vs[i]; break; }
       }
       if (!v) v = vs[0];
-      return {
-        variant_id: v.variant_id, headline: v.headline,
-        fact: v.fact || '', action: v.action
-      };
+      out.variant_id = v.variant_id;
+      if (v.headline !== undefined) out.headline = v.headline;
+      if (v.fact !== undefined) out.fact = v.fact;
+      if (v.action !== undefined) out.action = v.action;
     }
-    return {
-      variant_id: '', headline: rule.headline || '',
-      fact: rule.fact || '', action: rule.action || ''
-    };
+    return out;
   }
 
 
@@ -280,7 +288,7 @@
       if (rule.retired) continue;
       var pred = RULE_PREDICATES[rule.rule_id];
       if (pred && pred(judgements, flags, a)) {
-        var t = ruleText(rule, a);
+        var t = ruleText(rule, a, answers || {});
         fired.push({
           rule_id: rule.rule_id,
           cost: rule.cost,
