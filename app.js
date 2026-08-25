@@ -1391,9 +1391,9 @@
     return body;
   }
 
-  function findingBlock(f, extraClass) {
-    var html = '<div class="finding' + (extraClass ? ' ' + extraClass : '') + '">';
-    html += '<div class="finding-h">' + rich(f.headline) + '</div>';
+  function findingBlock(f, skipHeadline) {
+    var html = '<div class="finding">';
+    if (!skipHeadline) html += '<div class="finding-h">' + rich(f.headline) + '</div>';
     if (f.fact) html += '<p class="finding-fact">' + rich(f.fact) + '</p>';
     html += '<p class="finding-action">' + rich(f.action) + '</p>';
     var top = (f.cards || [])[0];
@@ -1405,6 +1405,12 @@
     return html + '</div>';
   }
 
+  function findingFold(summaryText, bodyHtml, open) {
+    return '<details class="fold-group finding-fold"' + (open ? ' open' : '') + '>' +
+      '<summary class="fold-group-h">' + esc(summaryText) + '</summary>' +
+      '<div class="fold-group-body">' + bodyHtml + '</div></details>';
+  }
+
   function findingsHtml() {
     var rules = state.data && state.data.rules;
     if (!rules) return '';
@@ -1412,11 +1418,10 @@
     if (!picked.sections.length && !picked.alwaysShown.length) return '';
     var html = '<div class="findings">';
     picked.sections.forEach(function (sec) {
-      html += '<div class="finding-sec-h">' + esc(sec.label) + '</div>';
-      html += findingBlock(sec.finding);
+      html += findingFold(sec.label, findingBlock(sec.finding), sec.cost === 'do_today');
     });
     picked.alwaysShown.forEach(function (a) {
-      html += findingBlock(a, 'finding-always');
+      html += findingFold(a.headline, findingBlock(a, true), false);
     });
     return html + '</div>';
   }

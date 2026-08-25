@@ -588,14 +588,15 @@ a:focus-visible {
    見出し=card-sec-h と同じ26px/accent、本文=card-p と同じ25px、
    事実=prereq-hint と同じうすめ墨。左の飾りは group-h と同じ柿の罫。 */
 .findings { margin: 0 0 22px; }
-.finding-sec-h { font-size: 26px; font-weight: 800; color: var(--accent); margin: 18px 0 6px; }
-.findings > .finding-sec-h:first-child { margin-top: 0; }
-.finding { border-left: 4px solid var(--color-kaki); padding-left: 12px; margin-bottom: 14px; }
+/* 折りたたみは既存の .fold-group をそのまま使う(見出しの開閉マークと 44px のタップ領域も既存のまま)。
+   並べたときに境目が分かるよう、間隔だけ足す。 */
+.finding-fold { margin-bottom: 10px; }
+.finding-fold:last-child { margin-bottom: 0; }
+.finding { border-left: 4px solid var(--color-kaki); padding-left: 12px; }
 .finding-h { font-size: 28px; font-weight: 800; margin: 0 0 6px; }
-.finding-fact { font-size: 25px; color: var(--color-ink-soft); margin: 0 0 8px; }
-.finding-action { font-size: 25px; margin: 0 0 4px; }
-/* 条件なしで全員に出るもの。3つの指摘とは別のまとまりだと分かるように罫で区切る */
-.finding-always { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--color-line); }
+/* 見出しは拾い読みする場所、中身は読む場所。中身だけ一段小さくする(22px は既存の補助テキストと同じ) */
+.finding-fact { font-size: 22px; color: var(--color-ink-soft); margin: 0 0 8px; }
+.finding-action { font-size: 22px; margin: 0 0 4px; }
 
 .group { margin-bottom: 26px; }
 .group-h {

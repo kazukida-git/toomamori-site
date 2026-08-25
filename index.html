@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500&family=Noto+Serif+JP:wght@500&family=Yusei+Magic&display=swap" />
-  <link rel="stylesheet" href="style.css?v=d65c7cd8" />
+  <link rel="stylesheet" href="style.css?v=8f80e41c" />
 </head>
 <body>
   <header class="site-header">
@@ -148,8 +148,9 @@
       <!-- ロードマップ「これから、増やしていく予定のもの」(承認済み文言・一字一句変更禁止)。
            番外編リンクの後・免責の前。見出しは lp-h3、項目名は太字(strong)の小見出し。
            最終段落の「ご意見・リクエストはこちら」はリクエストフォーム(素の短縮URL)への外部リンク。 -->
-      <div class="lp-block roadmap">
-        <h3 class="lp-h3">これから、増やしていく予定のもの</h3>
+      <details class="lp-block roadmap fold-group">
+        <summary class="fold-group-h lp-h3">これから、増やしていく予定のもの</summary>
+        <div class="fold-group-body">
         <p>とおまもりは、先行公開中の、育ちざかりのサイトです。これから、次のようなものを順に加えていく予定です。足りないところを増やすのと同じくらい、間違いを直すことも続けています。</p>
         <p><strong>食事のこと</strong>──離れて暮らす親御さんの毎日の食事を、どう支えるか。配食サービスだけでなく、ヘルパーさんにお願いできることの範囲まで含めた全体像を。</p>
         <p><strong>介護度ごとの目安</strong>──要介護1、2……で、だいたいどこまでのサービスを受けられるのか。ケアマネさんと話す前の、予備知識として。</p>
@@ -158,7 +159,8 @@
         <p><strong>暮らしの道具</strong>──一人暮らしの親御さんの毎日を助けてくれる、道具のえらび方。</p>
         <p><strong>対応地域の拡充</strong>──リクエストをいただいた市区町村から、順に追加していきます。</p>
         <p>順番も内容も、皆さまの声で変わります。「これが先にほしい」「こんなものはできないか」など、<a href="https://forms.gle/yaTN1ZeADWrC4iNB9" target="_blank" rel="noopener noreferrer">ご意見・リクエストはこちら</a>からひとことお寄せください。</p>
-      </div>
+        </div>
+      </details>
 
       <!-- 免責の一節(承認済み文言・一字一句変更禁止)。トップ最下部。控えめな補助テキスト。 -->
       <section class="site-disclaimer" aria-label="このサイトの情報について">
@@ -300,6 +302,6 @@
   </footer>
 
   <script src="rules-engine.js?v=e3bc2d20"></script>
-  <script src="app.js?v=2e212326"></script>
+  <script src="app.js?v=cbff8747"></script>
 </body>
 </html>
