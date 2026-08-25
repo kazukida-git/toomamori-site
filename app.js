@@ -1417,8 +1417,8 @@
     var picked = RulesEngine.topFindingsByCost(state.answers, rules);
     if (!picked.sections.length && !picked.alwaysShown.length) return '';
     var html = '<div class="findings">';
-    picked.sections.forEach(function (sec) {
-      html += findingFold(sec.label, findingBlock(sec.finding), sec.cost === 'do_today');
+    picked.sections.forEach(function (sec, i) {
+      html += findingFold(sec.label, findingBlock(sec.finding), i === 0);
     });
     picked.alwaysShown.forEach(function (a) {
       html += findingFold(a.headline, findingBlock(a, true), false);
@@ -1509,9 +1509,11 @@
     var otherKnow = knowledge.filter(function (c) { return !used[c.card_id]; });
 
     if (otherPrep.length) {
-      html += '<div class="group"><h3 class="group-h">＋ そのほか、準備すれば使える手札</h3>';
+      html += '<div class="group"><details class="fold-group">' +
+        '<summary class="fold-group-h">＋ そのほか、準備すれば使える手札(' + otherPrep.length + '枚)</summary>' +
+        '<div class="fold-group-body">';
       otherPrep.forEach(function (c) { html += renderCard(c, chain, 'preparable', 'open'); });
-      html += '</div>';
+      html += '</div></details></div>';
     }
     if (otherKnow.length) {
       var moneyPri = RulesEngine.moneyPriorityCards(state.answers);
@@ -1522,10 +1524,12 @@
           return ia - ib;
         });
       }
-      html += '<div class="group" id="group-money"><h3 class="group-h">知らないと損する制度</h3>';
+      html += '<div class="group"><details class="fold-group" id="group-money">' +
+        '<summary class="fold-group-h">知らないと損する制度(' + otherKnow.length + '枚)</summary>' +
+        '<div class="fold-group-body">';
       html += '<p class="group-note">使う・使わないの前に、知っておくだけで選択肢が変わります。</p>';
       otherKnow.forEach(function (c) { html += renderCard(c, chain, 'knowledge', 'open'); });
-      html += '</div>';
+      html += '</div></details></div>';
     }
 
     var promotedIds = [];
@@ -2140,7 +2144,12 @@
   }
   function scrollToSection(id) {
     var el = document.getElementById(id);
-    if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); el.classList.add('card-flash'); }
+    if (!el) return;
+    if (el.tagName === 'DETAILS') el.open = true;
+    var d = el.querySelector && el.querySelector('details.fold-group');
+    if (d) d.open = true;
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    el.classList.add('card-flash');
   }
 
   function currentScreen() {
