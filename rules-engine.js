@@ -320,6 +320,29 @@
   }
 
 
+
+
+
+
+
+
+  function topFindingsByCost(answers, rulesData) {
+    var r = evaluate(answers, rulesData);
+    var secs = (rulesData && rulesData.output_policy &&
+                rulesData.output_policy.cost_sections) || [];
+    var out = [];
+    secs.forEach(function (sec) {
+      for (var i = 0; i < r.firedRules.length; i++) {
+        if (r.firedRules[i].cost === sec.id) {
+          out.push({ cost: sec.id, label: sec.label, finding: r.firedRules[i] });
+          return;
+        }
+      }
+    });
+    return { sections: out, alwaysShown: r.alwaysShown };
+  }
+
+
   var MIRROR_THEME = {
     A: 'T_first_hour',
     B: 'T_self_down',
@@ -511,6 +534,7 @@
     ruleText: ruleText,
     buildAlwaysShown: buildAlwaysShown,
     evaluate: evaluate,
+    topFindingsByCost: topFindingsByCost,
     shortJudgements: shortJudgements
   };
 });

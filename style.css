@@ -583,6 +583,20 @@ a:focus-visible {
   border-radius: var(--radius); padding: 12px 16px; margin: 8px 0 20px;
 }
 .summary-line strong { color: var(--primary); font-size: 32px; }
+
+/* 指摘(要約行の直下)。文字サイズ・色は既存の本文と同じものを使い、新しい大きさは作らない。
+   見出し=card-sec-h と同じ26px/accent、本文=card-p と同じ25px、
+   事実=prereq-hint と同じうすめ墨。左の飾りは group-h と同じ柿の罫。 */
+.findings { margin: 0 0 22px; }
+.finding-sec-h { font-size: 26px; font-weight: 800; color: var(--accent); margin: 18px 0 6px; }
+.findings > .finding-sec-h:first-child { margin-top: 0; }
+.finding { border-left: 4px solid var(--color-kaki); padding-left: 12px; margin-bottom: 14px; }
+.finding-h { font-size: 28px; font-weight: 800; margin: 0 0 6px; }
+.finding-fact { font-size: 25px; color: var(--color-ink-soft); margin: 0 0 8px; }
+.finding-action { font-size: 25px; margin: 0 0 4px; }
+/* 条件なしで全員に出るもの。3つの指摘とは別のまとまりだと分かるように罫で区切る */
+.finding-always { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--color-line); }
+
 .group { margin-bottom: 26px; }
 .group-h {
   font-size: 29px; margin: 0 0 6px; color: var(--accent);

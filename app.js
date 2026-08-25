@@ -12,7 +12,6 @@
 
 
 
-
 (function () {
   'use strict';
 
@@ -1392,6 +1391,36 @@
     return body;
   }
 
+  function findingBlock(f, extraClass) {
+    var html = '<div class="finding' + (extraClass ? ' ' + extraClass : '') + '">';
+    html += '<div class="finding-h">' + rich(f.headline) + '</div>';
+    if (f.fact) html += '<p class="finding-fact">' + rich(f.fact) + '</p>';
+    html += '<p class="finding-action">' + rich(f.action) + '</p>';
+    var top = (f.cards || [])[0];
+    var card = top ? cardById(top) : null;
+    if (card) {
+      html += '<button type="button" class="link-btn bp-link" data-goto-card="' +
+        esc(card.card_id) + '">→ 「' + esc(card.name) + '」のカードへ</button>';
+    }
+    return html + '</div>';
+  }
+
+  function findingsHtml() {
+    var rules = state.data && state.data.rules;
+    if (!rules) return '';
+    var picked = RulesEngine.topFindingsByCost(state.answers, rules);
+    if (!picked.sections.length && !picked.alwaysShown.length) return '';
+    var html = '<div class="findings">';
+    picked.sections.forEach(function (sec) {
+      html += '<div class="finding-sec-h">' + esc(sec.label) + '</div>';
+      html += findingBlock(sec.finding);
+    });
+    picked.alwaysShown.forEach(function (a) {
+      html += findingBlock(a, 'finding-always');
+    });
+    return html + '</div>';
+  }
+
   function renderResult(profile) {
     if (!state.statuses || !Object.keys(state.statuses).length) computeDerived();
     if (!state.mirror) computeDerived();
@@ -1433,6 +1462,8 @@
       ' <button type="button" id="btn-back-mirror" class="link-btn">状況の鏡を見直す</button></div>';
     var availCount = derivedAvail.length + always.length;
     html += '<p class="summary-line">いま使える手札 <strong>' + availCount + '枚</strong> / 準備すれば増える手札 <strong>' + derivedPrep.length + '枚</strong></p>';
+
+    html += findingsHtml();
 
     var cmCard = cardById('care_manager');
     if (cmCard && state.statuses.care_manager === 'preparable' && !used.care_manager) {
