@@ -164,6 +164,19 @@ main.wrap { padding-top: 20px; padding-bottom: 24px; }
 .privacy-box--about p:last-child { margin-bottom: 0; }
 .privacy-box--about .privacy-aside { font-size: 14px; color: var(--color-ink-soft); }
 
+.launch-notice {
+  margin: 0 0 20px;
+  padding: 12px 16px;
+  background: var(--color-bg-section);
+  border-left: 4px solid var(--color-kaki);
+  border-radius: var(--radius);
+  color: var(--color-ink);
+  font-size: inherit;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+.field .launch-notice { margin: 0 0 12px; }
+
 .field { margin: 24px 0; }
 .field-label {
   display: block;

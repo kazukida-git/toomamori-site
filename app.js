@@ -527,7 +527,7 @@
       html = '<p class="area-ready">' + esc(muni) + 'の窓口情報をご案内できます。</p>';
     } else {
       html = '<p>' + esc(muni) + 'の詳しい窓口情報は、まだ準備中です。<strong>下のボタンから追加をリクエストできます。</strong>' +
-        'いただいたリクエストから数日以内に追加し、次にお越しいただいたときに反映されています。' +
+        'リクエストをいただいた地域から、順に調べて追加していきます。' +
         'それまでの間も、診断・備えプラン・緊急時ガイドはすべてお使いいただけます</p>';
       html += '<ul class="area-links">';
       html += '<li><a href="' + searchUrl(muni + ' 地域包括支援センター') + '" target="_blank" rel="noopener noreferrer">「' + esc(muni) + ' 地域包括支援センター」で検索</a></li>';
