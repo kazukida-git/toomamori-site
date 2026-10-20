@@ -7,6 +7,7 @@
  */
 
 :root {
+  --color-prelaunch: #5E6E7E;  /* 先行公開の帯の線とラベル(サイトの他の色と区別するための青みのグレー) */
   /* --- デザイントークン(唯一の色・書体の定義元) --- */
   --color-bg: #FAF7F0;          /* 生成り(ページ背景) */
   --color-bg-section: #F0E9DC;  /* 薄い飴色(セクション帯・折りたたみ背景) */
@@ -167,13 +168,23 @@ main.wrap { padding-top: 20px; padding-bottom: 24px; }
 .launch-notice {
   margin: 0 0 20px;
   padding: 12px 16px;
-  background: var(--color-bg-section);
-  border-left: 4px solid var(--color-kaki);
-  border-radius: var(--radius);
+  background: #FFFFFF;
+  border: 1.5px dashed var(--color-prelaunch);
+  border-radius: 12px;
   color: var(--color-ink);
   font-size: inherit;
   line-height: 1.8;
   overflow-wrap: anywhere;
+}
+.launch-notice-label {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 1px 8px;
+  background: var(--color-prelaunch);
+  color: #FFFFFF;
+  border-radius: 4px;
+  font-size: 0.8em;
+  line-height: 1.6;
 }
 .field .launch-notice { margin: 0 0 12px; }
 
